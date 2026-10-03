@@ -1,0 +1,425 @@
+
+/* ======================= FLOORP-MODERN BEGIN ======================= */
+/* Floorp Modern · One UI — страницы about: (настройки, дополнения, загрузки...) */
+@-moz-document url-prefix("about:"), url-prefix("chrome://browser/content/"), url-prefix("chrome://mozapps/"), url-prefix("chrome://global/content/") {
+  :root {
+
+    /* ---------- НАСТРОЙКИ: меняйте тут ---------- */
+    /* цвет акцента берётся из Windows (Параметры > Персонализация > Цвета) */
+    --fm-accent: light-dark(AccentColor, color-mix(in srgb, AccentColor 62%, white));
+    --fm-on-accent: light-dark(AccentColorText, color-mix(in srgb, AccentColor 22%, black));
+    --fm-radius: 22px;          /* скругление карточки со страницей */
+    --fm-gap: 8px;              /* отступ вокруг карточки */
+    /* -------------------------------------------- */
+
+    --fm-frame:  light-dark(#f2f3f5, #000000);
+    --fm-bar:    light-dark(#ffffff, #17181a);
+    --fm-field:  light-dark(#ffffff, #1f2022);
+    --fm-line:   light-dark(rgb(0 0 0 / .07), rgb(255 255 255 / .07));
+    --fm-ink:    light-dark(#111214, #f2f2f3);
+    --fm-muted:  light-dark(#6b6f76, #9a9da3);
+    --fm-hover:  light-dark(rgb(0 0 0 / .05), rgb(255 255 255 / .08));
+    --fm-press:  light-dark(rgb(0 0 0 / .10), rgb(255 255 255 / .14));
+    --fm-soft:   color-mix(in srgb, var(--fm-accent) 17%, transparent);
+    --fm-glass:  light-dark(rgb(255 255 255 / .78), rgb(36 37 40 / .72));
+    --fm-shine:  inset 0 1px 0 light-dark(rgb(255 255 255 / .95), rgb(255 255 255 / .07));
+    --fm-pop:    0 4px 10px light-dark(rgb(0 0 0 / .06), rgb(0 0 0 / .45)),
+                 0 22px 56px light-dark(rgb(0 0 0 / .14), rgb(0 0 0 / .65));
+    --fm-card:   0 1px 3px light-dark(rgb(0 0 0 / .05), rgb(0 0 0 / .6)),
+                 0 10px 30px light-dark(rgb(0 0 0 / .06), rgb(0 0 0 / .4));
+    --fm-font:   "Segoe UI Variable Display", "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif;
+
+    /* ---- One UI: чёрный (или светло-серый) фон, белые/графитовые карточки ---- */
+    --background-color-canvas: var(--fm-frame) !important;
+    --background-color-box: var(--fm-bar) !important;
+    --background-color-list-item-hover: var(--fm-hover) !important;
+    --text-color: var(--fm-ink) !important;
+    --text-color-deemphasized: var(--fm-muted) !important;
+    --border-color: var(--fm-line) !important;
+    --border-color-deemphasized: var(--fm-line) !important;
+    --border-color-interactive: color-mix(in srgb, var(--fm-ink) 28%, transparent) !important;
+    --border-color-selected: var(--fm-accent) !important;
+
+    --color-accent-primary: var(--fm-accent) !important;
+    --color-accent-primary-hover: color-mix(in srgb, var(--fm-accent) 88%, var(--fm-ink)) !important;
+    --color-accent-primary-active: color-mix(in srgb, var(--fm-accent) 76%, var(--fm-ink)) !important;
+    --color-accent-primary-selected: color-mix(in srgb, var(--fm-accent) 18%, transparent) !important;
+    --focus-outline-color: var(--fm-accent) !important;
+    --link-color: var(--fm-accent) !important;
+    --link-color-hover: color-mix(in srgb, var(--fm-accent) 85%, var(--fm-ink)) !important;
+
+    --border-radius-xsmall: 6px !important;
+    --border-radius-small: 10px !important;
+    --border-radius-medium: 16px !important;
+    --border-radius-large: 26px !important;
+    --border-radius-xlarge: 30px !important;
+
+    /* карточки и группы настроек */
+    --card-background-color: var(--fm-bar) !important;
+    --card-border: 0 solid transparent !important;
+    --card-border-color: transparent !important;
+    --card-border-radius: 26px !important;
+    --card-box-shadow: none !important;
+    --card-box-shadow-hover: none !important;
+    --card-padding: 20px !important;
+    --box-border: 0 solid transparent !important;
+    --box-border-radius: 26px !important;
+    --box-border-radius-inner: 18px !important;
+
+    /* кнопки — «таблетки» */
+    --button-border-radius: 999px !important;
+    --button-min-height: 36px !important;
+    --button-padding-inline: 18px !important;
+    --button-font-weight: 600 !important;
+    --button-background-color: color-mix(in srgb, var(--fm-ink) 9%, transparent) !important;
+    --button-background-color-hover: color-mix(in srgb, var(--fm-ink) 14%, transparent) !important;
+    --button-background-color-active: color-mix(in srgb, var(--fm-ink) 20%, transparent) !important;
+    --button-border-color: transparent !important;
+    --button-background-color-primary: var(--fm-accent) !important;
+    --button-background-color-primary-hover: color-mix(in srgb, var(--fm-accent) 88%, var(--fm-ink)) !important;
+    --button-background-color-primary-active: color-mix(in srgb, var(--fm-accent) 76%, var(--fm-ink)) !important;
+    --button-text-color-primary: var(--fm-on-accent) !important;
+    --button-text-color-primary-hover: var(--fm-on-accent) !important;
+    --button-border-color-primary: transparent !important;
+
+    /* поля ввода и списки */
+    --input-text-border-radius: 999px !important;
+    --input-search-border-radius: 999px !important;
+    --input-text-background-color: var(--fm-field) !important;
+    --input-text-border-color: transparent !important;
+    --input-text-min-height: 38px !important;
+    --select-border-radius: 999px !important;
+    --select-background-color: color-mix(in srgb, var(--fm-ink) 9%, transparent) !important;
+    --select-border-color: transparent !important;
+
+    /* переключатели в стиле One UI */
+    --toggle-background-color-pressed: var(--fm-accent) !important;
+    --toggle-background-color-pressed-hover: color-mix(in srgb, var(--fm-accent) 88%, var(--fm-ink)) !important;
+    --toggle-border-color: transparent !important;
+    --toggle-background-color: color-mix(in srgb, var(--fm-ink) 22%, transparent) !important;
+    --toggle-dot-background-color: #fff !important;
+    --toggle-height: 22px !important;
+    --toggle-width: 40px !important;
+
+    /* навигация слева: «таблетки», выбранный пункт — цвет акцента */
+    --page-nav-button-border-radius: 999px !important;
+    --page-nav-button-background-color-selected: var(--fm-soft) !important;
+    --page-nav-button-text-color-selected: var(--fm-accent) !important;
+    --page-nav-button-background-color-hover: var(--fm-hover) !important;
+    --page-nav-button-indicator-background-color: transparent !important;
+    --page-nav-border-color: transparent !important;
+
+    /* старые переменные страниц */
+    --in-content-page-background: var(--fm-frame) !important;
+    --in-content-box-background: var(--fm-bar) !important;
+    --in-content-primary-button-background: var(--fm-accent) !important;
+    --in-content-primary-button-text-color: var(--fm-on-accent) !important;
+    --in-content-focus-outline-color: var(--fm-accent) !important;
+    --in-content-accent-color: var(--fm-accent) !important;
+    --in-content-border-radius: 16px !important;
+  }
+  :root { background-color: var(--fm-frame) !important; }
+  body { font-family: var(--fm-font) !important; }
+  h1 { font-weight: 700 !important; letter-spacing: -0.01em !important; }
+
+  /* группы настроек = большие карточки, как в One UI */
+  setting-group, groupbox, .card, moz-card, .addon.card, #searchInput + *, .info-box-container {
+    border-radius: 26px !important;
+  }
+  :is(setting-group, groupbox):not([hidden]) {
+    background: var(--fm-bar) !important;
+    padding: 18px 22px !important;
+    margin-block-end: 14px !important;
+    border: 0 !important;
+  }
+  .card, .addon.card { background: var(--fm-bar) !important; border: 0 !important; box-shadow: none !important; }
+  .card:hover, .addon.card:hover { box-shadow: none !important; background: color-mix(in srgb, var(--fm-bar) 92%, var(--fm-ink)) !important; }
+
+  /* старые элементы about:addons / about:preferences */
+  .category, .page-nav-button { border-radius: 999px !important; }
+  .category[selected], .category:is([selected], :hover) { border-radius: 999px !important; }
+  .category[selected] { background: var(--fm-soft) !important; color: var(--fm-accent) !important; }
+  .category[selected]::before, .category::before { display: none !important; }
+  button:not(.ghost-button):not([type="icon"]), select, menulist, input[type="search"], input[type="text"] {
+    border-radius: 999px !important;
+  }
+  input[type="checkbox"] { accent-color: var(--fm-accent) !important; border-radius: 6px !important; }
+  input[type="radio"] { accent-color: var(--fm-accent) !important; }
+  richlistbox, .list, tree { border-radius: 18px !important; border-color: var(--fm-line) !important; }
+  dialog, .dialogBox { border-radius: 26px !important; }
+}
+/* ---------- стартовая страница Floorp: экран блокировки Galaxy ---------- */
+@-moz-document url-prefix("chrome://noraneko-newtab/"), url("about:newtab"), url("about:home") {
+  :root {
+    --fm-accent: AccentColor;
+    --fm-glow: color-mix(in srgb, AccentColor 75%, white);
+  }
+  html { background: #04050a !important; }
+  html, body {
+    font-family: "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif !important;
+  }
+  body { background: transparent !important; }
+
+  /* живой фон «аврора» в цвете акцента Windows (если не выбрана своя картинка) */
+  #root::before {
+    content: "";
+    position: fixed;
+    inset: -15%;
+    z-index: -1;
+    pointer-events: none;
+    background:
+      radial-gradient(38% 46% at 22% 28%, color-mix(in srgb, AccentColor 92%, transparent), transparent 70%),
+      radial-gradient(34% 42% at 78% 22%, rgb(150 90 255 / .72), transparent 70%),
+      radial-gradient(40% 50% at 62% 82%, rgb(0 200 255 / .5), transparent 70%),
+      radial-gradient(30% 36% at 18% 86%, rgb(255 80 170 / .38), transparent 70%),
+      #04050a;
+    /* без filter: blur — на большом слое Firefox рисует вместо него серый блок */
+    animation: fm-aurora 38s ease-in-out infinite alternate;
+    will-change: transform;
+  }
+  #root::after {
+    /* лёгкое «зерно» и затемнение краёв, как на обоях Galaxy */
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: radial-gradient(120% 90% at 50% 40%, transparent 55%, rgb(0 0 0 / .55));
+  }
+  @keyframes fm-aurora {
+    0%   { transform: translate3d(0, 0, 0) rotate(0deg) scale(1); }
+    50%  { transform: translate3d(4%, -3%, 0) rotate(8deg) scale(1.08); }
+    100% { transform: translate3d(-4%, 3%, 0) rotate(-6deg) scale(1.04); }
+  }
+  /* встроенные картинки Floorp прячем, свои картинки пользователя остаются */
+  .bg-cover[style*="noraneko-newtab"] { display: none !important; }
+
+  /* логотип с тёмной надписью не нужен */
+  .flex.justify-center.items-center.mb-8:has(> img[alt="Logo"]) { display: none !important; }
+
+  /* часы: огромные и тонкие, по центру сверху */
+  /* раскладка: часы сверху, поиск по центру, ярлыки ниже */
+  .w-full.min-h-screen.flex.flex-col.justify-center.items-center {
+    padding-top: 16vh !important;
+  }
+  .absolute.top-4.right-4 {
+    position: fixed !important;
+    top: 12vh !important;
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%);
+    z-index: 1;
+  }
+  .absolute.top-4.right-4 > div {
+    background: none !important;
+    backdrop-filter: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+  }
+  .absolute.top-4.right-4 > div > .flex {
+    flex-direction: column !important;
+    align-items: center !important;
+    gap: 6px !important;
+  }
+  .absolute.top-4.right-4 .tabular-nums {
+    font-size: clamp(72px, 10.5vw, 156px) !important;
+    font-weight: 250 !important;
+    line-height: .95 !important;
+    letter-spacing: -0.03em !important;
+    color: #fff !important;
+    text-shadow: 0 6px 40px rgb(0 0 0 / .35), 0 0 60px color-mix(in srgb, AccentColor 35%, transparent);
+  }
+  .absolute.top-4.right-4 .tabular-nums > .animate-pulse {
+    animation: fm-blink 2s ease-in-out infinite !important;
+    opacity: .9;
+  }
+  @keyframes fm-blink { 50% { opacity: .25; } }
+  .absolute.top-4.right-4 .flex-col.text-right {
+    flex-direction: row !important;
+    gap: 8px !important;
+    text-align: center !important;
+  }
+  .absolute.top-4.right-4 .flex-col.text-right > div {
+    font-size: 19px !important;
+    font-weight: 500 !important;
+    color: rgb(255 255 255 / .88) !important;
+    letter-spacing: .01em;
+  }
+  .absolute.top-4.right-4 .flex-col.text-right > div:first-child { text-transform: capitalize; }
+
+  /* поиск: стеклянная «таблетка» */
+  .group.cursor-pointer:has(input[readonly]) {
+    min-height: 62px !important;
+    padding: 0 12px 0 24px !important;
+    border-radius: 999px !important;
+    background: rgb(22 23 26 / .92) !important;
+    border: 1px solid rgb(255 255 255 / .16) !important;
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / .25), 0 20px 60px rgb(0 0 0 / .35) !important;
+    transition: transform .3s cubic-bezier(.2, .8, .2, 1), background-color .3s ease, box-shadow .3s ease !important;
+  }
+  .group.cursor-pointer:has(input[readonly]):hover {
+    background: rgb(30 31 35 / .96) !important;
+    transform: translateY(-2px) scale(1.012);
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / .3), 0 26px 70px rgb(0 0 0 / .4), 0 0 0 4px color-mix(in srgb, AccentColor 25%, transparent) !important;
+  }
+  .group.cursor-pointer:has(input[readonly]) input {
+    font-size: 17px !important;
+    color: #fff !important;
+  }
+  .group.cursor-pointer:has(input[readonly]) input::placeholder { color: rgb(255 255 255 / .72) !important; }
+  .group.cursor-pointer:has(input[readonly]) svg { color: #fff !important; }
+
+  /* ярлыки сайтов: стеклянный «док» с круглыми иконками */
+  .inline-block.backdrop-blur-sm.p-3 {
+    border-radius: 30px !important;
+    background: rgb(22 23 26 / .9) !important;
+    border: 1px solid rgb(255 255 255 / .12) !important;
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / .18), 0 20px 50px rgb(0 0 0 / .3) !important;
+    padding: 14px 10px !important;
+  }
+  a.group.flex.flex-col.items-center { border-radius: 20px !important; }
+  a.group.flex.flex-col.items-center:hover { background: rgb(255 255 255 / .10) !important; }
+  a.group .overflow-hidden.bg-gray-700 {
+    border-radius: 999px !important;
+    background: rgb(255 255 255 / .92) !important;
+    box-shadow: inset 0 -2px 4px rgb(0 0 0 / .12), 0 6px 16px rgb(0 0 0 / .3) !important;
+  }
+
+  /* кнопка настроек */
+  button.fixed.bottom-4.right-4 {
+    background: rgb(22 23 26 / .9) !important;
+    border: 1px solid rgb(255 255 255 / .12) !important;
+  }
+
+  @media (max-height: 640px) {
+    .absolute.top-4.right-4 { top: 6vh !important; }
+    .absolute.top-4.right-4 .tabular-nums { font-size: 64px !important; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #root::before, .animate-pulse { animation: none !important; }
+  }
+}
+
+/* ---------- настройки Floorp (chrome://noraneko-settings) в стиле One UI ---------- */
+@-moz-document url-prefix("chrome://noraneko-settings/") {
+  :root, :root[data-theme], .floorp-standard-ui {
+    --floorp-brand: AccentColor !important;
+    --floorp-brand-hover: color-mix(in srgb, AccentColor 85%, black) !important;
+    --floorp-action: AccentColor !important;
+    --floorp-focus: AccentColor !important;
+    --floorp-switch-on: AccentColor !important;
+    --floorp-font: "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif !important;
+    --chakra-colors-purple-solid: AccentColor !important;
+    --chakra-colors-purple-fg: AccentColor !important;
+    --chakra-colors-purple-contrast: AccentColorText !important;
+    --chakra-colors-purple-focus-ring: AccentColor !important;
+    --chakra-colors-purple-subtle: color-mix(in srgb, AccentColor 14%, transparent) !important;
+    --chakra-colors-purple-muted: color-mix(in srgb, AccentColor 24%, transparent) !important;
+    --chakra-colors-purple-emphasized: color-mix(in srgb, AccentColor 34%, transparent) !important;
+    --chakra-radii-l1: 10px !important;
+    --chakra-radii-l2: 14px !important;
+    --chakra-radii-l3: 22px !important;
+    --chakra-radii-sm: 8px !important;
+    --chakra-radii-md: 12px !important;
+    --chakra-radii-lg: 18px !important;
+    --chakra-radii-xl: 22px !important;
+    --chakra-radii-2xl: 26px !important;
+    --chakra-fonts-body: var(--floorp-font) !important;
+    --chakra-fonts-heading: var(--floorp-font) !important;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root, :root[data-theme], .floorp-standard-ui {
+      --floorp-action: color-mix(in srgb, AccentColor 62%, white) !important;
+      --floorp-canvas: #000 !important;
+      --floorp-subtle: #17181a !important;
+      --floorp-surface: #17181a !important;
+      --floorp-line: rgb(255 255 255 / .08) !important;
+      --chakra-colors-bg: #000 !important;
+      --chakra-colors-bg-muted: #17181a !important;
+      --chakra-colors-bg-panel: #17181a !important;
+      --chakra-colors-bg-subtle: #17181a !important;
+      --chakra-colors-border: rgb(255 255 255 / .08) !important;
+      --chakra-colors-purple-fg: color-mix(in srgb, AccentColor 62%, white) !important;
+    }
+  }
+  @media (prefers-color-scheme: light) {
+    :root, :root[data-theme], .floorp-standard-ui {
+      --floorp-canvas: #f2f3f5 !important;
+      --floorp-subtle: #fff !important;
+      --floorp-surface: #fff !important;
+      --floorp-line: rgb(0 0 0 / .07) !important;
+      --chakra-colors-bg: #f2f3f5 !important;
+      --chakra-colors-bg-muted: #fff !important;
+      --chakra-colors-bg-panel: #fff !important;
+      --chakra-colors-border: rgb(0 0 0 / .07) !important;
+    }
+  }
+  body { font-family: var(--floorp-font) !important; }
+  button, input, select, textarea { font-family: inherit !important; }
+}
+
+
+/* ======== ПАНЕЛИ ЗАКЛАДОК И ЖУРНАЛА (старое «дерево» Firefox) ======== */
+@-moz-document url-prefix("chrome://browser/content/places/"), url-prefix("chrome://browser/content/sidebar/"), url-prefix("chrome://browser/content/bookmarks/"), url-prefix("chrome://browser/content/history/") {
+  :root, body, #bookmarksPanel, #history-panel, page, window {
+    background-color: var(--fm-frame, light-dark(#f2f3f5, #000)) !important;
+    color: var(--fm-ink, light-dark(#111214, #f2f2f3)) !important;
+    font-family: "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif !important;
+  }
+  #sidebar-search-container, .sidebar-search-container {
+    padding: 10px 12px 8px !important;
+    background: transparent !important;
+  }
+  :is(search-textbox, moz-input-search, input[type="search"], #search-box) {
+    border-radius: 999px !important;
+    border: 0 !important;
+    background-color: color-mix(in srgb, currentColor 9%, transparent) !important;
+    min-height: 36px !important;
+    padding-inline: 12px !important;
+    outline: none !important;
+  }
+  :is(search-textbox, moz-input-search, input[type="search"], #search-box):focus-within {
+    outline: 2px solid var(--fm-accent, AccentColor) !important;
+    outline-offset: -2px !important;
+  }
+  tree, #bookmarks-view, #historyTree {
+    background-color: transparent !important;
+    border: 0 !important;
+    color: inherit !important;
+    margin: 0 6px !important;
+    appearance: none !important;
+  }
+  tree:focus-visible { outline: none !important; }
+  treechildren::-moz-tree-row {
+    min-height: 36px !important;
+    background-color: transparent !important;
+    border: 0 !important;
+  }
+  treechildren::-moz-tree-row(hover) {
+    background-color: color-mix(in srgb, currentColor 7%, transparent) !important;
+  }
+  treechildren::-moz-tree-row(selected),
+  treechildren::-moz-tree-row(selected, focus),
+  treechildren::-moz-tree-row(selected, current, focus) {
+    background-color: color-mix(in srgb, var(--fm-accent, AccentColor) 22%, transparent) !important;
+    border: 0 !important;
+    outline: none !important;
+  }
+  treechildren::-moz-tree-row(current, focus) { outline: none !important; border: 0 !important; }
+  treechildren::-moz-tree-cell-text {
+    color: inherit !important;
+    padding-inline-start: 6px !important;
+    font-size: 13.5px !important;
+  }
+  treechildren::-moz-tree-cell-text(selected),
+  treechildren::-moz-tree-cell-text(selected, focus) {
+    color: var(--fm-ink, light-dark(#111214, #f2f2f3)) !important;
+    font-weight: 600 !important;
+  }
+  treechildren::-moz-tree-twisty { padding-inline: 6px !important; opacity: .7; }
+  treechildren::-moz-tree-image { margin-inline-end: 4px !important; }
+  .sidebar-placesTree, .sidebar-panel { background: transparent !important; }
+  /* новый список вкладок/истории (html) */
+  :is(.sidebar-row, sidebar-tab-row, .history-item, fxview-tab-row) { border-radius: 14px !important; }
+}
+/* ======================= FLOORP-MODERN END ======================= */

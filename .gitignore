@@ -1,0 +1,6 @@
+*.bak-floorp-modern
+*.bak
+fm-log.json
+fm-boot.json
+audit.json
+__pycache__/
