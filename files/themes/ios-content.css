@@ -1,0 +1,82 @@
+
+/* ---------------- iOS theme overlay ---------------- */
+@-moz-document url-prefix("about:"), url-prefix("chrome://browser/content/"), url-prefix("chrome://mozapps/"), url-prefix("chrome://global/content/") {
+  :root {
+
+  --fm-accent: light-dark(#007AFF, #0A84FF) !important;
+  --fm-on-accent: #ffffff !important;
+  --fm-frame: light-dark(#F2F2F7, #000000) !important;
+  --fm-bar: light-dark(#FFFFFF, #1C1C1E) !important;
+  --fm-field: light-dark(#E5E5EA, #1C1C1E) !important;
+  --fm-menu: light-dark(#FFFFFF, #1C1C1E) !important;
+  --fm-ink: light-dark(#000000, #FFFFFF) !important;
+  --fm-muted: light-dark(#8A8A8E, #8D8D93) !important;
+  --fm-line: light-dark(rgb(60 60 67 / .16), rgb(84 84 88 / .55)) !important;
+  --fm-hover: light-dark(rgb(120 120 128 / .12), rgb(120 120 128 / .24)) !important;
+  --fm-press: light-dark(rgb(120 120 128 / .2), rgb(120 120 128 / .36)) !important;
+  --fm-soft: light-dark(rgb(0 122 255 / .14), rgb(10 132 255 / .22)) !important;
+  --fm-radius: 18px !important;
+  --fm-font: "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif !important;
+
+    --color-accent-primary: var(--fm-accent) !important;
+    --button-background-color-primary: var(--fm-accent) !important;
+    --link-color: var(--fm-accent) !important;
+    --focus-outline-color: var(--fm-accent) !important;
+    /* переключатели iPhone: зелёные */
+    --toggle-background-color-pressed: #34C759 !important;
+    --toggle-background-color-pressed-hover: #30B350 !important;
+    --toggle-height: 24px !important;
+    --toggle-width: 42px !important;
+    --page-nav-button-background-color-selected: var(--fm-accent) !important;
+    --page-nav-button-text-color-selected: #ffffff !important;
+    --card-border-radius: 22px !important;
+    --box-border-radius: 22px !important;
+  }
+  :is(setting-group, groupbox):not([hidden]), .card, .addon.card { border-radius: 22px !important; }
+  .category[selected] { background: var(--fm-accent) !important; color: #fff !important; }
+}
+
+@-moz-document url-prefix("chrome://noraneko-settings/") {
+  :root, :root[data-theme], .floorp-standard-ui {
+    --floorp-brand: #0A84FF !important;
+    --floorp-action: #0A84FF !important;
+    --floorp-focus: #0A84FF !important;
+    --floorp-switch-on: #34C759 !important;
+    --chakra-colors-purple-solid: #0A84FF !important;
+    --chakra-colors-purple-fg: #0A84FF !important;
+    --chakra-colors-purple-focus-ring: #0A84FF !important;
+    --chakra-colors-purple-subtle: rgb(10 132 255 / .16) !important;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root, :root[data-theme], .floorp-standard-ui {
+      --floorp-surface: #1C1C1E !important; --floorp-subtle: #1C1C1E !important;
+      --chakra-colors-bg-panel: #1C1C1E !important; --chakra-colors-bg-muted: #1C1C1E !important;
+    }
+  }
+}
+
+/* стартовая страница: экран блокировки iPhone — дата сверху, жирные часы */
+@-moz-document url-prefix("chrome://noraneko-newtab/"), url("about:newtab"), url("about:home") {
+  #root::before {
+    background:
+      radial-gradient(42% 50% at 25% 25%, rgb(10 132 255 / .85), transparent 70%),
+      radial-gradient(36% 46% at 80% 22%, rgb(94 92 230 / .80), transparent 70%),
+      radial-gradient(44% 52% at 62% 85%, rgb(255 55 95 / .45), transparent 70%),
+      radial-gradient(30% 36% at 15% 85%, rgb(100 210 255 / .40), transparent 70%),
+      #000 !important;
+  }
+  .absolute.top-4.right-4 > div > .flex { flex-direction: column-reverse !important; gap: 2px !important; }
+  .absolute.top-4.right-4 .tabular-nums {
+    font-weight: 700 !important;
+    letter-spacing: -0.02em !important;
+    font-size: clamp(80px, 11vw, 168px) !important;
+  }
+  .absolute.top-4.right-4 .tabular-nums > .animate-pulse { animation: none !important; opacity: 1 !important; }
+  .absolute.top-4.right-4 .flex-col.text-right > div { font-size: 21px !important; font-weight: 600 !important; }
+  .group.cursor-pointer:has(input[readonly]) {
+    border-radius: 16px !important;
+    background: rgb(28 28 30 / .9) !important;
+    border: 0 !important;
+    min-height: 54px !important;
+  }
+}

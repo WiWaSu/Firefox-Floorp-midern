@@ -1,0 +1,12 @@
+
+/* ---------------- iOS theme overlay ---------------- */
+:root:has(#outerContainer #viewerContainer) {
+  & {
+    --x-accent: light-dark(#007AFF, #0A84FF) !important;
+    --x-on-accent: #ffffff !important;
+    --x-ground: light-dark(#F2F2F7, #000000) !important;
+    --x-bar: light-dark(#FFFFFF, #1C1C1E) !important;
+    --x-well: light-dark(#E5E5EA, #2C2C2E) !important;
+    --x-field: light-dark(#FFFFFF, #2C2C2E) !important;
+  }
+}

@@ -1,0 +1,90 @@
+
+/* ---------------- iOS theme overlay ---------------- */
+:root, menupopup, panel, tooltip, #urlbar, .urlbarView {
+
+  --fm-accent: light-dark(#007AFF, #0A84FF) !important;
+  --fm-on-accent: #ffffff !important;
+  --fm-frame: light-dark(#F2F2F7, #000000) !important;
+  --fm-bar: light-dark(#FFFFFF, #1C1C1E) !important;
+  --fm-field: light-dark(#E5E5EA, #1C1C1E) !important;
+  --fm-menu: light-dark(#FFFFFF, #1C1C1E) !important;
+  --fm-ink: light-dark(#000000, #FFFFFF) !important;
+  --fm-muted: light-dark(#8A8A8E, #8D8D93) !important;
+  --fm-line: light-dark(rgb(60 60 67 / .16), rgb(84 84 88 / .55)) !important;
+  --fm-hover: light-dark(rgb(120 120 128 / .12), rgb(120 120 128 / .24)) !important;
+  --fm-press: light-dark(rgb(120 120 128 / .2), rgb(120 120 128 / .36)) !important;
+  --fm-soft: light-dark(rgb(0 122 255 / .14), rgb(10 132 255 / .22)) !important;
+  --fm-radius: 18px !important;
+  --fm-font: "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif !important;
+
+  --fm-ring: light-dark(rgb(0 122 255 / .35), rgb(10 132 255 / .40)) !important;
+  --fm-ring-focus: light-dark(rgb(0 122 255 / .7), rgb(10 132 255 / .75)) !important;
+  --fm-ring-glow: transparent !important;
+}
+
+/* иконки меню: скруглённые квадраты, как в Настройках iPhone */
+#appMenu-new-tab-button2 { --fm-tile: #0A84FF !important; }
+#appMenu-new-window-button2, #appMenu-new-classic-window-button { --fm-tile: #40C8E0 !important; }
+#appMenu-new-private-window-button2 { --fm-tile: #5E5CE6 !important; }
+#appMenu-history-button { --fm-tile: #FF9F0A !important; }
+#appMenu-bookmarks-button { --fm-tile: #FFCC00 !important; }
+#appMenu-downloads-button { --fm-tile: #30D158 !important; }
+#appMenu-passwords-button { --fm-tile: #8E8E93 !important; }
+#appMenu-extensions-themes-button, #appMenu-unified-extensions-button { --fm-tile: #BF5AF2 !important; }
+#appMenu-print-button2 { --fm-tile: #8E8E93 !important; }
+#appMenu-save-file-button2 { --fm-tile: #0A84FF !important; }
+#appMenu-translate-button { --fm-tile: #40C8E0 !important; }
+#appMenu-find-button2 { --fm-tile: #0A84FF !important; }
+#appMenu-settings-button { --fm-tile: #8E8E93 !important; }
+#appMenu-more-button2 { --fm-tile: #8E8E93 !important; }
+#appMenu-help-button2 { --fm-tile: #0A84FF !important; }
+#appMenu-profiles-button, #appMenu-create-profile-button { --fm-tile: #FF375F !important; }
+#appMenu-tab-groups-button { --fm-tile: #40C8E0 !important; }
+#appMenu-quit-button2 { --fm-tile: #FF453A !important; }
+#appMenu-fullscreen-button2 { --fm-tile: #8E8E93 !important; }
+#appMenu-mainView .subviewbutton:is(#appMenu-new-tab-button2, #appMenu-new-window-button2, #appMenu-new-classic-window-button, #appMenu-new-private-window-button2, #appMenu-history-button, #appMenu-bookmarks-button, #appMenu-downloads-button, #appMenu-passwords-button, #appMenu-extensions-themes-button, #appMenu-unified-extensions-button, #appMenu-print-button2, #appMenu-save-file-button2, #appMenu-translate-button, #appMenu-find-button2, #appMenu-settings-button, #appMenu-more-button2, #appMenu-help-button2, #appMenu-profiles-button, #appMenu-create-profile-button, #appMenu-tab-groups-button, #appMenu-quit-button2, #appMenu-fullscreen-button2) > .toolbarbutton-icon {
+  border-radius: 8px !important;
+  width: 29px !important; height: 29px !important; padding: 6.5px !important;
+  box-shadow: none !important;
+}
+#appMenu-mainView .subviewbutton { border-radius: 12px !important; min-height: 44px !important; }
+#appMenu-mainView .subviewbutton > .toolbarbutton-text { font-weight: 400 !important; font-size: 14.5px !important; }
+
+/* меню: ровные списки с тонкими разделителями */
+menupopup::part(content), panel::part(content) { border-radius: 14px !important; }
+menupopup > :is(menuitem, menu) { border-radius: 8px !important; }
+menupopup > :is(menuitem, menu):is([_moz-menuactive], :hover):not([disabled]) {
+  background-color: var(--fm-accent) !important;
+  color: #fff !important;
+}
+
+/* вкладки: выбранная — светлая «плашка», как сегмент в iOS */
+.tabbrowser-tab[selected] > .tab-stack > .tab-background,
+.tabbrowser-tab[multiselected] > .tab-stack > .tab-background {
+  background: light-dark(#FFFFFF, #2C2C2E) !important;
+  box-shadow: 0 1px 3px light-dark(rgb(0 0 0 / .12), rgb(0 0 0 / .5)) !important;
+}
+.tabbrowser-tab[selected] .tab-label { color: var(--fm-ink) !important; font-weight: 600 !important; }
+.tabbrowser-tab[selected] > .tab-stack > .tab-background::before { display: none !important; }
+
+/* кнопки: без заливки акцентом, только цвет значка — как в iOS */
+toolbarbutton:is([open], [checked]) > :is(.toolbarbutton-icon, .toolbarbutton-badge-stack) {
+  background-color: var(--fm-hover) !important;
+}
+
+/* закладки: без «таблеток», просто текст, как в Safari */
+#PlacesToolbarItems > .bookmark-item { background: transparent !important; box-shadow: none !important; }
+#PlacesToolbarItems > .bookmark-item:hover { background: var(--fm-hover) !important; }
+
+/* боковая панель сайтов: выбранный — плашка */
+.panel-sidebar-panel[data-checked="true"] { background-color: var(--fm-hover) !important; box-shadow: none !important; }
+
+/* выпадающий список адресной строки */
+.urlbarView-row[selected] > .urlbarView-row-inner { background: var(--fm-accent) !important; color: #fff !important; }
+.urlbarView-row[selected] :is(.urlbarView-title, .urlbarView-action, .urlbarView-url) { color: #fff !important; }
+.urlbarView-favicon { border-radius: 8px !important; }
+.urlbarView-row[selected] .urlbarView-favicon { background: rgb(255 255 255 / .22) !important; fill: #fff !important; }
+
+/* уведомления */
+.fm-toast { border-radius: 16px !important; }
+.fm-toast[data-kind="ok"] .fm-toast-dot { background: #30D158 !important; }
