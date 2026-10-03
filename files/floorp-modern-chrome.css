@@ -519,6 +519,87 @@ menupopup > :is(menuitem, menu):is([_moz-menuactive]):not([disabled]) {
 }
 
 
+
+/* ======== ОКНО «БИБЛИОТЕКА» (журнал, загрузки, закладки) ======== */
+@-moz-document url("chrome://browser/content/places/places.xhtml") {
+  :root, #placesView, #placesToolbox, #placesToolbar, #placesViewsBox, #contentView,
+  #placesList, #placeContent, #downloadsListBox, #detailsPane, #infoBox {
+    background-color: var(--fm-frame) !important;
+    background-image: none !important;
+    color: var(--fm-ink) !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    appearance: none !important;
+  }
+  :root { font-family: var(--fm-font) !important; }
+  #placesToolbox { padding: 8px 10px !important; }
+  #placesToolbar { gap: 4px !important; align-items: center !important; }
+  :is(#back-button, #forward-button) { border-radius: 999px !important; }
+  :is(#placesToolbar > toolbarbutton, #placesMenu > menu, #clearDownloadsButton) {
+    border-radius: 999px !important;
+    padding: 6px 14px !important;
+    margin: 0 2px !important;
+    background: transparent !important;
+    border: 0 !important;
+  }
+  :is(#placesToolbar > toolbarbutton, #placesMenu > menu, #clearDownloadsButton):hover,
+  #placesMenu > menu[open] {
+    background: color-mix(in srgb, var(--fm-ink) 9%, transparent) !important;
+  }
+  #searchFilter {
+    border-radius: 999px !important;
+    border: 0 !important;
+    outline: none !important;
+    min-height: 36px !important;
+    padding-inline: 14px !important;
+    background-color: color-mix(in srgb, var(--fm-ink) 9%, transparent) !important;
+    color: var(--fm-ink) !important;
+  }
+  #searchFilter:focus-within { outline: 2px solid var(--fm-ring-focus, var(--fm-accent)) !important; outline-offset: -2px !important; }
+  /* разделители между панелями — убрать */
+  #placesView > splitter, splitter {
+    border: 0 !important;
+    background: transparent !important;
+    min-width: 6px !important;
+    width: 6px !important;
+  }
+  /* левая колонка: пункты-«таблетки» */
+  #placesList { margin: 8px 4px 8px 8px !important; }
+  #placesList treechildren::-moz-tree-row { min-height: 40px !important; }
+  /* загрузки: скруглённые карточки, выделение мягкой заливкой без рамки */
+  #downloadsListBox { margin: 8px 10px !important; padding: 0 !important; }
+  #downloadsListBox > richlistitem {
+    border: 0 !important;
+    outline: none !important;
+    border-radius: 18px !important;
+    margin-block: 3px !important;
+    padding: 10px 12px !important;
+    background: transparent !important;
+  }
+  #downloadsListBox > richlistitem:hover { background: color-mix(in srgb, var(--fm-ink) 6%, transparent) !important; }
+  #downloadsListBox > richlistitem[selected],
+  #downloadsListBox:focus > richlistitem[selected],
+  #downloadsListBox > richlistitem[selected][current] {
+    background: color-mix(in srgb, var(--fm-accent) 14%, transparent) !important;
+    border: 0 !important;
+    outline: none !important;
+    box-shadow: none !important;
+  }
+  #downloadsListBox .downloadTarget { font-weight: 600 !important; font-size: 14px !important; }
+  #downloadsListBox .downloadDetails { color: var(--fm-muted) !important; opacity: 1 !important; }
+  #downloadsListBox .downloadButton { border-radius: 999px !important; }
+  #downloadsListBox .downloadButton:hover { background: color-mix(in srgb, var(--fm-ink) 10%, transparent) !important; }
+  .downloadProgress { border-radius: 999px !important; }
+  .downloadProgress::-moz-progress-bar { background: var(--fm-accent) !important; border-radius: 999px !important; }
+  /* таблица закладок/журнала справа */
+  #placeContent { margin: 8px 10px !important; }
+  #placeContent treecol, #placeContent treecolpicker {
+    background: transparent !important; border: 0 !important; color: var(--fm-muted) !important;
+  }
+  #placeContent treechildren::-moz-tree-row(odd) { background-color: transparent !important; }
+  #detailsPane, #infoBox { border-top: 0 !important; padding: 10px 14px !important; }
+}
+
 /* ======== ПАНЕЛИ ЗАКЛАДОК И ЖУРНАЛА (старое «дерево» Firefox) ======== */
 @-moz-document url-prefix("chrome://browser/content/places/"), url-prefix("chrome://browser/content/sidebar/"), url-prefix("chrome://browser/content/bookmarks/"), url-prefix("chrome://browser/content/history/") {
   :root, body, #bookmarksPanel, #history-panel, page, window {
@@ -561,7 +642,7 @@ menupopup > :is(menuitem, menu):is([_moz-menuactive]):not([disabled]) {
   treechildren::-moz-tree-row(selected),
   treechildren::-moz-tree-row(selected, focus),
   treechildren::-moz-tree-row(selected, current, focus) {
-    background-color: color-mix(in srgb, var(--fm-accent, AccentColor) 22%, transparent) !important;
+    background-color: color-mix(in srgb, var(--fm-accent, AccentColor) 16%, transparent) !important;
     border: 0 !important;
     outline: none !important;
   }

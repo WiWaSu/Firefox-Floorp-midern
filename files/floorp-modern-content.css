@@ -401,7 +401,7 @@
   treechildren::-moz-tree-row(selected),
   treechildren::-moz-tree-row(selected, focus),
   treechildren::-moz-tree-row(selected, current, focus) {
-    background-color: color-mix(in srgb, var(--fm-accent, AccentColor) 22%, transparent) !important;
+    background-color: color-mix(in srgb, var(--fm-accent, AccentColor) 16%, transparent) !important;
     border: 0 !important;
     outline: none !important;
   }
