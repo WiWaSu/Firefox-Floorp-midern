@@ -684,7 +684,9 @@ public static extern int DwmSetWindowAttribute(System.IntPtr hwnd, int attr, ref
   $hint = & $get "ThemeHint"
   $icon = & $get "AppIcon"
   $prevOne = & $get "PrevOneUi"; $prevIos = & $get "PrevIos"
-  $brush = { param($c) New-Object Windows.Media.SolidColorBrush ($c) }
+  # ресурсы окна принимают любой object: PowerShell завернул бы кисть в PSObject,
+  # и WPF её не узнал бы. Поэтому везде явное приведение к SolidColorBrush
+  $brush = { param($c) [Windows.Media.SolidColorBrush]::new([Windows.Media.Color]$c) }
   $rgb = { param($r, $g, $b) [Windows.Media.Color]::FromRgb($r, $g, $b) }
   $ms = { param($n) New-Object System.Windows.Duration ([TimeSpan]::FromMilliseconds($n)) }
   $animate = {
@@ -710,16 +712,16 @@ public static extern int DwmSetWindowAttribute(System.IntPtr hwnd, int attr, ref
     param($t)
     if ($t -eq "ios") {
       $acc = & $rgb 0x0A 0x84 0xFF
-      $window.Resources["Accent"] = & $brush $acc
-      $window.Resources["SwitchOn"] = & $brush (& $rgb 0x30 0xD1 0x58)
+      $window.Resources["Accent"] = [Windows.Media.SolidColorBrush](& $brush $acc)
+      $window.Resources["SwitchOn"] = [Windows.Media.SolidColorBrush](& $brush (& $rgb 0x30 0xD1 0x58))
       $icon.Background = & $iconBrush (& $rgb 0x5A 0xC8 0xFA) (& $rgb 0x0A 0x84 0xFF) (& $rgb 0x5E 0x5C 0xE6)
       (& $get "GlowAColor").Color = $acc
       (& $get "GlowBColor").Color = & $rgb 0xFF 0x37 0x5F
       $hint.Text = $hints.ios
       $show = $prevIos; $hide = $prevOne
     } else {
-      $window.Resources["Accent"] = & $brush $winAccent
-      $window.Resources["SwitchOn"] = & $brush $winAccent
+      $window.Resources["Accent"] = [Windows.Media.SolidColorBrush](& $brush $winAccent)
+      $window.Resources["SwitchOn"] = [Windows.Media.SolidColorBrush](& $brush $winAccent)
       $icon.Background = & $iconBrush $winAccent (& $rgb 0x8E 0x6B 0xFF) (& $rgb 0xFF 0x5C 0x8A)
       (& $get "GlowAColor").Color = $winAccent
       (& $get "PrevAccentStop").Color = $winAccent
