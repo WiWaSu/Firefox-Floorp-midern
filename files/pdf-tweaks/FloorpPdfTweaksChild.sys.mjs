@@ -293,8 +293,13 @@ export class FloorpPdfTweaksChild extends JSWindowActorChild {
       }
       return { h, s: max ? d / max : 0, v: max };
     };
-    // стиль задаём строкой атрибута: так CSS-переменные точно доходят до страницы
-    const css = (node, props) => node.setAttribute("style", Object.entries(props).map(([k, v]) => `${k}:${v}`).join(";"));
+    // стиль задаём через CSSOM (style.setProperty): атрибут style="" просмотрщик
+    // запрещает своей политикой безопасности (CSP), и такие стили молча не применяются
+    const css = (node, props) => {
+      for (const [k, v] of Object.entries(props)) {
+        node.style.setProperty(k, v);
+      }
+    };
     const el = (tag, cls) => {
       const e = doc.createElement(tag);
       if (cls) {
