@@ -59,6 +59,12 @@ export class FloorpPdfTweaksChild extends JSWindowActorChild {
     if (!isViewer || !doc.getElementById("viewerContainer")) {
       return;
     }
+    // установщик может выключить новый просмотрщик PDF
+    try {
+      if (!Services.prefs.getBoolPref("floorp.pdftweaks.enabled", true)) {
+        return;
+      }
+    } catch {}
     this.#ac = new AbortController();
     try {
       this.#setupTheme();

@@ -266,7 +266,87 @@ findbar .findbar-textbox { border-radius: 999px !important; }
   * { transition: none !important; }
 }
 
-/* ======== ВАУ-СЛОЙ ======== */
+/* ======== ВАУ-СЛОЙ: живость One UI 8.5 ======== */
+/* контекстные меню раскрываются с мягкой «пружинкой» */
+menupopup::part(content) {
+  animation: fm-pop .22s cubic-bezier(.2, .9, .3, 1.12) both;
+  transform-origin: 50% 0;
+}
+@keyframes fm-pop { from { opacity: 0; transform: translateY(-6px) scale(.96); } }
+
+/* кнопки отвечают на нажатие, как в One UI: чуть «проседают» */
+toolbar .toolbarbutton-1 > :is(.toolbarbutton-icon, .toolbarbutton-badge-stack) {
+  transition: background-color .2s ease, scale .28s cubic-bezier(.3, 1.6, .5, 1) !important;
+}
+toolbar .toolbarbutton-1:not([disabled]):active > :is(.toolbarbutton-icon, .toolbarbutton-badge-stack) { scale: .88; }
+#PlacesToolbarItems > .bookmark-item { transition: background-color .2s ease, scale .25s cubic-bezier(.3, 1.6, .5, 1) !important; }
+#PlacesToolbarItems > .bookmark-item:active { scale: .94; }
+
+/* адрес по центру, пока строка не в фокусе — как в Samsung Internet */
+#urlbar:not([focused], [open]) #urlbar-input,
+moz-urlbar:not([focused], [open]) .urlbar-input { text-align: center !important; }
+#urlbar { --urlbar-min-height: 38px !important; }
+
+/* вкладки: значок слегка подпрыгивает при наведении, активная — жирнее */
+.tabbrowser-tab .tab-icon-image { transition: scale .25s cubic-bezier(.3, 1.6, .5, 1) !important; }
+.tabbrowser-tab:hover .tab-icon-image { scale: 1.12; }
+.tabbrowser-tab[selected] .tab-label { font-weight: 600 !important; }
+
+/* заголовки панелей крупные, как в One UI */
+.panel-header { justify-content: flex-start !important; padding-inline: 16px !important; }
+.panel-header > h1 { font-size: 19px !important; font-weight: 700 !important; letter-spacing: -0.01em !important; }
+
+/* режим фокуса (Alt+Shift+Z): прячет закладки и боковые панели */
+:root[fm-focus] :is(#PersonalToolbar, #sidebar-main, #sidebar-box, #panel-sidebar-select-box, #panel-sidebar-box, #sidebar-splitter, #panel-sidebar-splitter) {
+  visibility: collapse !important;
+}
+
+/* «Now Bar»: музыка из другой вкладки — плашка внизу, как на Galaxy */
+.fm-nowbar {
+  position: absolute; left: 50%; bottom: 16px; z-index: 1001;
+  display: flex; align-items: center; gap: 4px;
+  max-width: min(460px, calc(100% - 40px));
+  padding: 6px 6px 6px 8px; border-radius: 999px;
+  background: var(--fm-bar); color: var(--fm-ink);
+  border: 1px solid var(--fm-line);
+  box-shadow: var(--fm-shine), var(--fm-pop);
+  font: 500 13px var(--fm-font);
+  opacity: 0; translate: -50% 18px; scale: .96;
+  pointer-events: none;
+  transition: opacity .25s ease, translate .4s cubic-bezier(.2, .9, .25, 1.15), scale .4s cubic-bezier(.2, .9, .25, 1.15);
+}
+.fm-nowbar.fm-in { opacity: 1; translate: -50% 0; scale: 1; pointer-events: auto; }
+.fm-nowbar-eq {
+  flex: none; width: 30px; height: 30px; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center; gap: 2px;
+  background: var(--fm-accent);
+}
+.fm-nowbar-eq > span {
+  width: 3px; height: 12px; border-radius: 2px; background: var(--fm-on-accent);
+  transform-origin: 50% 100%;
+  animation: fm-eq .9s ease-in-out infinite alternate;
+}
+.fm-nowbar-eq > span:nth-child(2) { animation-delay: -.3s; }
+.fm-nowbar-eq > span:nth-child(3) { animation-delay: -.6s; }
+.fm-nowbar[data-paused] .fm-nowbar-eq > span { animation: none; transform: scaleY(.35); }
+@keyframes fm-eq { from { transform: scaleY(.3); } to { transform: scaleY(1); } }
+.fm-nowbar-title {
+  flex: 1; min-width: 0; padding: 0 8px; cursor: pointer;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.fm-nowbar-title:hover { color: var(--fm-accent); }
+.fm-nowbar-btn {
+  flex: none; width: 30px; height: 30px; border-radius: 50%; cursor: pointer;
+  background: center / 16px no-repeat; -moz-context-properties: fill; fill: currentColor;
+}
+.fm-nowbar-btn:hover { background-color: var(--fm-hover); }
+.fm-nowbar-btn:active { background-color: var(--fm-press); }
+.fm-nowbar-play { background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='context-fill'><rect x='6.5' y='5' width='4' height='14' rx='1.5'/><rect x='13.5' y='5' width='4' height='14' rx='1.5'/></svg>"); }
+.fm-nowbar[data-paused] .fm-nowbar-play { background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='context-fill'><path d='M8 5.5v13a1 1 0 0 0 1.5.9l10.2-6.5a1 1 0 0 0 0-1.7L9.5 4.6A1 1 0 0 0 8 5.5z'/></svg>"); }
+.fm-nowbar-mute { background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='context-fill' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M4 9.5v5h3.5L12 18.5v-13L7.5 9.5z' fill='context-fill'/><path d='M15.5 9a4 4 0 0 1 0 6M18 6.5a7.5 7.5 0 0 1 0 11'/></svg>"); }
+.fm-nowbar[data-muted] .fm-nowbar-mute { background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='context-fill' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M4 9.5v5h3.5L12 18.5v-13L7.5 9.5z' fill='context-fill'/><path d='M16 9.5l5 5M21 9.5l-5 5'/></svg>"); }
+.fm-nowbar-close { background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='context-fill' stroke-width='2' stroke-linecap='round'><path d='M7 7l10 10M17 7L7 17'/></svg>"); background-size: 14px; opacity: .7; }
+:root[fm-nowbar] .fm-toasts { bottom: 76px; }
 
 
 /* ======== НОВЫЕ ФУНКЦИИ (скрипт floorp-modern.uc.js) ======== */

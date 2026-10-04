@@ -6,6 +6,10 @@
  *  3. Alt+Shift+C — скопировать адрес страницы.
  *  4. Уведомление о завершённой загрузке файла.
  *  5. Кнопка быстрой смены темы: Авто / Светлая / Тёмная.
+ *  6. «Now Bar»: музыка играет в другой вкладке — плашка внизу с паузой и звуком.
+ *  7. Уведомления о масштабе страницы и о выключенном звуке вкладки.
+ *  8. Alt+Shift+D — закрыть повторяющиеся вкладки.
+ *  9. Alt+Shift+Z — режим фокуса (прячет закладки и боковые панели).
  */
 (function () {
   "use strict";
@@ -250,5 +254,192 @@
     onUnload.push(() => Services.prefs.removeObserver(THEME_PREFS[0], prefObserver));
     syncThemeButton();
 
+  });
+  safe("now bar", () => {
+    /* ------------- «Now Bar»: что играет в другой вкладке ------------- */
+    const gB = win.gBrowser;
+    if (!gB) {
+      return;
+    }
+    const bar = el("div", "fm-nowbar");
+    const eq = el("div", "fm-nowbar-eq");
+    eq.append(el("span"), el("span"), el("span"));
+    const title = el("div", "fm-nowbar-title");
+    const play = el("div", "fm-nowbar-btn fm-nowbar-play");
+    const mute = el("div", "fm-nowbar-btn fm-nowbar-mute");
+    const close = el("div", "fm-nowbar-btn fm-nowbar-close");
+    play.title = "Пауза / продолжить";
+    mute.title = "Звук вкладки";
+    close.title = "Скрыть";
+    bar.append(eq, title, play, mute, close);
+    host.after(bar);
+
+    let current = null;      // вкладка, которую показывает плашка
+    let pausedByUs = false;  // мы поставили на паузу — плашку не прячем
+    const dismissed = new WeakSet();
+
+    const controller = tab => {
+      try {
+        return tab.linkedBrowser.browsingContext.mediaController;
+      } catch (e) {
+        return null;
+      }
+    };
+    const pick = () => {
+      if (current && current.isConnected && (current.hasAttribute("soundplaying") || pausedByUs)) {
+        return current;
+      }
+      pausedByUs = false;
+      return [...gB.tabs].reverse().find(t => t.hasAttribute("soundplaying") && !dismissed.has(t)) || null;
+    };
+    const render = () => {
+      current = pick();
+      const show = !!current && current !== gB.selectedTab && !dismissed.has(current);
+      bar.classList.toggle("fm-in", show);
+      doc.documentElement.toggleAttribute("fm-nowbar", show);
+      if (!current) {
+        return;
+      }
+      title.textContent = current.label || "Музыка";
+      bar.toggleAttribute("data-paused", pausedByUs);
+      bar.toggleAttribute("data-muted", current.hasAttribute("muted"));
+    };
+
+    title.addEventListener("click", () => current && (gB.selectedTab = current));
+    play.addEventListener("click", () => {
+      const mc = current && controller(current);
+      if (!mc) {
+        return;
+      }
+      try {
+        if (pausedByUs) {
+          mc.play();
+          pausedByUs = false;
+        } else {
+          mc.pause();
+          pausedByUs = true;
+        }
+      } catch (e) {
+        log("now bar: пауза не сработала", e);
+      }
+      render();
+    });
+    mute.addEventListener("click", () => {
+      current?.toggleMuteAudio();
+      render();
+    });
+    close.addEventListener("click", () => {
+      if (current) {
+        dismissed.add(current);
+      }
+      pausedByUs = false;
+      render();
+    });
+
+    const tc = gB.tabContainer;
+    const onAttr = e => {
+      const changed = e.detail?.changed || [];
+      if (changed.includes("soundplaying") || changed.includes("muted") || changed.includes("label")) {
+        if (changed.includes("soundplaying") && e.target.hasAttribute("soundplaying")) {
+          dismissed.delete(e.target);
+          if (e.target === current) {
+            pausedByUs = false;
+          }
+        }
+        render();
+      }
+    };
+    tc.addEventListener("TabAttrModified", onAttr);
+    tc.addEventListener("TabSelect", render);
+    tc.addEventListener("TabClose", () => win.setTimeout(render, 0));
+    onUnload.push(() => {
+      tc.removeEventListener("TabAttrModified", onAttr);
+      tc.removeEventListener("TabSelect", render);
+    });
+  });
+
+  safe("zoom and mute toasts", () => {
+    /* ---------------- масштаб страницы и звук вкладки ---------------- */
+    const gB = win.gBrowser;
+    if (!gB) {
+      return;
+    }
+    let lastBrowser = gB.selectedBrowser;
+    const zoomOf = b => {
+      try {
+        return Math.round(win.ZoomManager.getZoomForBrowser(b) * 100);
+      } catch (e) {
+        return 0;
+      }
+    };
+    let lastZoom = zoomOf(lastBrowser);
+    let zoomTimer = 0;
+    win.addEventListener("FullZoomChange", () => {
+      win.clearTimeout(zoomTimer);
+      zoomTimer = win.setTimeout(() => {
+        const b = gB.selectedBrowser;
+        const z = zoomOf(b);
+        if (b === lastBrowser && z && z !== lastZoom) {
+          toast(`Масштаб ${z}%`, "info");
+        }
+        lastBrowser = b;
+        lastZoom = z;
+      }, 120);
+    }, true);
+    gB.tabContainer.addEventListener("TabSelect", () => {
+      lastBrowser = gB.selectedBrowser;
+      lastZoom = zoomOf(lastBrowser);
+    });
+    gB.tabContainer.addEventListener("TabAttrModified", e => {
+      if (e.target === gB.selectedTab && (e.detail?.changed || []).includes("muted")) {
+        toast(e.target.hasAttribute("muted") ? "Звук вкладки выключен" : "Звук вкладки включён", "info");
+      }
+    });
+  });
+
+  safe("shortcuts", () => {
+    /* ------------ Alt+Shift+D — дубли, Alt+Shift+Z — режим фокуса ------------ */
+    win.addEventListener("keydown", e => {
+      if (!e.altKey || !e.shiftKey || e.ctrlKey || e.metaKey) {
+        return;
+      }
+      if (e.code === "KeyD") {
+        e.preventDefault();
+        e.stopPropagation();
+        const gB = win.gBrowser;
+        const seen = new Set();
+        const extra = [];
+        // выбранная вкладка остаётся, закрываем её копии
+        for (const t of [gB.selectedTab, ...gB.tabs]) {
+          if (t.pinned) {
+            continue;
+          }
+          const url = t.linkedBrowser?.currentURI?.spec;
+          if (!url || url === "about:blank") {
+            continue;
+          }
+          if (seen.has(url)) {
+            if (t !== gB.selectedTab) {
+              extra.push(t);
+            }
+          } else {
+            seen.add(url);
+          }
+        }
+        const uniq = [...new Set(extra)];
+        if (uniq.length) {
+          gB.removeTabs(uniq);
+          toast(`Закрыто одинаковых вкладок: ${uniq.length}`, "ok");
+        } else {
+          toast("Одинаковых вкладок нет", "info");
+        }
+      } else if (e.code === "KeyZ") {
+        e.preventDefault();
+        e.stopPropagation();
+        const on = !doc.documentElement.hasAttribute("fm-focus");
+        doc.documentElement.toggleAttribute("fm-focus", on);
+        toast(on ? "Режим фокуса: Alt+Shift+Z — выйти" : "Режим фокуса выключен", "info");
+      }
+    }, true);
   });
 })();

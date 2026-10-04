@@ -1,6 +1,6 @@
 # Floorp Modern
 
-**A redesign for [Floorp](https://floorp.app) and Firefox on Windows in two styles — Samsung One UI or iOS — with a reworked built-in PDF viewer.**
+**A redesign for [Floorp](https://floorp.app) and Firefox on Windows in two styles — Samsung One UI or iOS 26 Liquid Glass — with a reworked built-in PDF viewer.**
 
 [Русская версия ниже](#русский)
 
@@ -10,7 +10,7 @@
 
 **Two themes** — pick one in the installer:
 - **One UI** — Samsung Galaxy look, accent color from Windows.
-- **iOS** — iPhone look: Apple blue, rounded-square menu icons like iOS Settings, green switches, Safari-style bookmarks, bold lock-screen clock with the date on top.
+- **iOS · Liquid Glass** — iOS 26 look: a wallpaper behind the window, a floating glass toolbar capsule, glass tabs, menus and toasts with highlights, square app icons, green switches, a glass lock-screen clock, and a PDF toolbar that floats over the pages.
 
 **Interface**
 - Turns on Firefox's new **Nova** design as a base (and replaces Floorp's old *Lepton* skin with *Proton*).
@@ -28,6 +28,10 @@
 - `Alt+Shift+C` copies the current page address (with a toast).
 - “Downloaded: file” toast when a download finishes.
 - Theme button on the toolbar: Auto / Light / Dark in one click.
+- **Now Bar**: music playing in another tab shows a small bar at the bottom with pause, mute and “go to tab”.
+- Toasts for page zoom and tab mute.
+- `Alt+Shift+D` closes duplicate tabs, `Alt+Shift+Z` toggles focus mode (hides bookmarks and sidebars).
+- Address centered while not editing, springy menus and buttons.
 - Smooth fade when switching tabs.
 - Tabs sidebar expands on hover.
 
@@ -47,11 +51,11 @@
 
 1. Download the repository (`Code → Download ZIP`) and unzip it.
 2. Double-click **`Setup.cmd`** and allow administrator rights.
-3. In the window pick the theme (**One UI** or **iOS**) and switch on **Floorp**, **Firefox** or both.
+3. In the window pick the theme (**One UI** or **iOS · Liquid Glass**), switch on **Floorp**, **Firefox** or both, and choose whether to install the **new PDF viewer**.
 4. Press **Install**. If the browser is open, the installer asks you to close it.
 5. Start the browser.
 
-Prefer a console? `install.cmd` does the same with text prompts.
+On Windows 11 the setup window itself is frosted glass. Prefer a console? `install.cmd` does the same with text prompts.
 
 If Windows SmartScreen appears: *More info → Run anyway*.
 
@@ -108,7 +112,7 @@ This is an unofficial community mod. It is not affiliated with or endorsed by Mo
 
 **Две темы** на выбор в установщике:
 - **One UI**: как Samsung Galaxy, акцент из Windows.
-- **iOS**: как iPhone. Синий Apple, иконки-квадраты как в Настройках, зелёные переключатели, жирные часы с датой сверху.
+- **iOS · Liquid Glass**: как iOS 26. Обои под окном, парящая стеклянная панель, стеклянные вкладки, меню и уведомления с бликами, иконки-квадраты, зелёные переключатели, стеклянные часы, панель PDF поверх страниц.
 
 ### Что меняется
 
@@ -128,6 +132,10 @@ This is an unofficial community mod. It is not affiliated with or endorsed by Mo
 - `Alt+Shift+C` копирует адрес страницы.
 - Уведомление «Загружено: файл».
 - Кнопка темы на панели: Авто, Светлая или Тёмная.
+- **Now Bar**: если музыка играет в другой вкладке, внизу появляется плашка с паузой, звуком и переходом к вкладке.
+- Уведомления о масштабе страницы и выключенном звуке.
+- `Alt+Shift+D` закрывает одинаковые вкладки, `Alt+Shift+Z` включает режим фокуса.
+- Адрес по центру, «пружинящие» меню и кнопки.
 - Плавное появление страницы при смене вкладки.
 - Панель вкладок раскрывается при наведении.
 
@@ -140,7 +148,7 @@ This is an unofficial community mod. It is not affiliated with or endorsed by Mo
 
 1. Скачайте репозиторий (`Code → Download ZIP`) и распакуйте.
 2. Запустите **`Setup.cmd`** и разрешите права администратора.
-3. В окне выберите тему (**One UI** или **iOS**) и включите **Floorp**, **Firefox** или оба.
+3. В окне выберите тему (**One UI** или **iOS · Liquid Glass**), включите **Floorp**, **Firefox** или оба и решите, ставить ли **новый просмотрщик PDF**.
 4. Нажмите **Установить** и откройте браузер.
 
 Консольный вариант: `install.cmd`.
