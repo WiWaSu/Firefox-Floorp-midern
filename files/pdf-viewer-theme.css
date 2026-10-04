@@ -428,6 +428,9 @@
     box-shadow: var(--x-pop) !important;
     animation: x-pop .18s cubic-bezier(.2, .9, .3, 1.15) both;
   }
+  /* Firefox рисует кнопки системным стилем Windows (appearance: auto), и стили
+     пользователя его не отключают — отсюда серые квадраты. Выключаем явно. */
+  & #xColorPop :is(button, input) { appearance: none !important; -moz-appearance: none !important; }
   & #xColorPop .x-grid { display: grid !important; grid-template-columns: repeat(5, 34px) !important; gap: 8px !important; justify-content: space-between !important; }
   & #xColorPop .x-recent { margin-top: 10px !important; padding-top: 10px !important; border-top: 1px solid var(--x-line) !important; }
   & #xColorPop button.x-dot {

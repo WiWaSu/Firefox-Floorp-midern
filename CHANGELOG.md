@@ -5,6 +5,9 @@
 The installer version is shown in the setup window, the console and
 `chrome\floorp-modern-version.txt` in the profile.
 
+## 1.4.2 — 2026-10-04
+- Исправлено: кружки палитры в PDF были серыми квадратами. Firefox рисовал их системным стилем кнопок Windows; теперь он отключён (`appearance: none`).
+
 ## 1.4.1 — 2026-10-04
 - Исправлено: в PDF не выбирался цвет. Просмотрщик запрещает стили через атрибут `style=""` (CSP), поэтому палитра оставалась без цветов и позиции. Теперь стили задаются через CSSOM.
 
