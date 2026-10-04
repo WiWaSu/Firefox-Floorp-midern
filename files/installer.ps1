@@ -21,6 +21,8 @@
 $ErrorActionPreference = "Stop"
 try { [Console]::OutputEncoding = [Text.Encoding]::UTF8 } catch {}
 
+# версия установщика (меняется вместе с файлом VERSION и CHANGELOG.md)
+$Version = "1.4.0"
 $Here = $PSScriptRoot
 $Utf8 = New-Object System.Text.UTF8Encoding($false)
 $Ru = $true
@@ -207,6 +209,7 @@ function Invoke-Modern($action, $keys, $theme, $pdf = $true) {
             Write-Text $path $text.TrimStart()
           }
           Write-Text (Join-Path $chrome "floorp-modern-theme.txt") $theme
+          Write-Text (Join-Path $chrome "floorp-modern-version.txt") $Version
 
           $userJs = Join-Path $p.FullName "user.js"
           $u = Remove-OurPrefs (Read-Text $userJs)
@@ -240,8 +243,10 @@ function Invoke-Modern($action, $keys, $theme, $pdf = $true) {
             $path = Join-Path $chrome $file
             if (Test-Path $path) { Write-Text $path ((Remove-OurBlocks (Read-Text $path)).TrimEnd() + "`n") }
           }
-          $themeFile = Join-Path $chrome "floorp-modern-theme.txt"
-          if (Test-Path $themeFile) { Remove-Item $themeFile -Force }
+          foreach ($f in @("floorp-modern-theme.txt", "floorp-modern-version.txt")) {
+            $themeFile = Join-Path $chrome $f
+            if (Test-Path $themeFile) { Remove-Item $themeFile -Force }
+          }
           $userJs = Join-Path $p.FullName "user.js"
           if (Test-Path $userJs) {
             $u = Remove-OurPrefs (Read-Text $userJs)
@@ -478,7 +483,12 @@ function Show-Gui {
               </Grid>
             </Border>
             <StackPanel Margin="16,2,0,0" VerticalAlignment="Center">
-              <TextBlock Text="Floorp Modern" Foreground="{StaticResource Ink}" FontSize="26" FontWeight="Bold"/>
+              <StackPanel Orientation="Horizontal">
+                <TextBlock Text="Floorp Modern" Foreground="{StaticResource Ink}" FontSize="26" FontWeight="Bold"/>
+                <Border CornerRadius="9" Background="#1FFFFFFF" BorderBrush="{StaticResource Rim}" BorderThickness="1" Padding="8,2" Margin="10,0,0,0" VerticalAlignment="Center">
+                  <TextBlock x:Name="VersionLabel" Foreground="{StaticResource Muted}" FontSize="12" FontWeight="SemiBold"/>
+                </Border>
+              </StackPanel>
               <TextBlock x:Name="Subtitle" Foreground="{StaticResource Muted}" FontSize="14" Margin="0,1,0,0"/>
             </StackPanel>
           </StackPanel>
@@ -662,6 +672,8 @@ public static extern int DwmSetWindowAttribute(System.IntPtr hwnd, int attr, ref
   }
 
   # ---------- тексты ----------
+  (& $get "VersionLabel").Text = "v$Version"
+  $window.Title = "Floorp Modern $Version"
   (& $get "Subtitle").Text = T "Новый вид для Floorp и Firefox" "A fresh look for Floorp and Firefox"
   (& $get "ThemeCaption").Text = T "ТЕМА" "THEME"
   (& $get "BrowsersCaption").Text = T "БРАУЗЕРЫ" "BROWSERS"
@@ -853,7 +865,7 @@ if ($Gui) {
 
 # ---------------- консольный режим ----------------
 Say ""
-Say "Floorp Modern" Cyan
+Say "Floorp Modern $Version" Cyan
 if ($found.Count -eq 0) {
   Say (T "Не нашёл ни Floorp, ни Firefox. Установите браузер и запустите его хотя бы раз." "Neither Floorp nor Firefox was found.") Red
   if (-not $SkipAdmin) { Read-Host (T "Нажмите Enter" "Press Enter") | Out-Null }
