@@ -265,13 +265,17 @@
     const eq = el("div", "fm-nowbar-eq");
     eq.append(el("span"), el("span"), el("span"));
     const title = el("div", "fm-nowbar-title");
+    const prev = el("div", "fm-nowbar-btn fm-nowbar-prev");
     const play = el("div", "fm-nowbar-btn fm-nowbar-play");
+    const next = el("div", "fm-nowbar-btn fm-nowbar-next");
     const mute = el("div", "fm-nowbar-btn fm-nowbar-mute");
     const close = el("div", "fm-nowbar-btn fm-nowbar-close");
+    prev.title = "Назад";
+    next.title = "Вперёд";
     play.title = "Пауза / продолжить";
     mute.title = "Звук вкладки";
     close.title = "Скрыть";
-    bar.append(eq, title, play, mute, close);
+    bar.append(eq, title, prev, play, next, mute, close);
     host.after(bar);
 
     let current = null;      // вкладка, которую показывает плашка
@@ -303,7 +307,94 @@
       title.textContent = current.label || "Музыка";
       bar.toggleAttribute("data-paused", pausedByUs);
       bar.toggleAttribute("data-muted", current.hasAttribute("muted"));
+      // «назад/вперёд» показываем, только если сайт их поддерживает (YouTube, Spotify, ВК…)
+      let keys = [];
+      try {
+        keys = [...(controller(current)?.supportedKeys || [])];
+      } catch (e) {}
+      prev.hidden = !keys.includes("previoustrack") && !keys.includes("seekbackward");
+      next.hidden = !keys.includes("nexttrack") && !keys.includes("seekforward");
+      if (show) {
+        placeSaved();
+      }
     };
+
+    /* ---- перетаскивание плашки; место запоминается ---- */
+    const POS_PREF = "floorp.modern.nowbar.pos";
+    const area = () => bar.offsetParent || bar.parentNode;
+    const placeAt = (x, y) => {
+      const p = area();
+      const maxX = Math.max(0, p.clientWidth - bar.offsetWidth - 8);
+      const maxY = Math.max(0, p.clientHeight - bar.offsetHeight - 8);
+      bar.style.left = Math.min(maxX, Math.max(8, x)) + "px";
+      bar.style.top = Math.min(maxY, Math.max(8, y)) + "px";
+      bar.style.bottom = "auto";
+      bar.setAttribute("data-moved", "true");
+    };
+    function placeSaved() {
+      let saved = "";
+      try {
+        saved = Services.prefs.getStringPref(POS_PREF, "");
+      } catch (e) {}
+      const m = /^([\d.]+),([\d.]+)$/.exec(saved);
+      if (!m) {
+        return;
+      }
+      const p = area();
+      placeAt(+m[1] * p.clientWidth, +m[2] * p.clientHeight);
+    }
+    let drag = null;
+    bar.addEventListener("pointerdown", e => {
+      if (e.button !== 0 || e.target.closest(".fm-nowbar-btn")) {
+        return;
+      }
+      const r = bar.getBoundingClientRect();
+      const pr = area().getBoundingClientRect();
+      drag = { id: e.pointerId, sx: e.clientX, sy: e.clientY, dx: e.clientX - r.left + pr.left, dy: e.clientY - r.top + pr.top, moved: false };
+      bar.setPointerCapture(e.pointerId);
+    });
+    bar.addEventListener("pointermove", e => {
+      if (!drag || e.pointerId !== drag.id) {
+        return;
+      }
+      if (!drag.moved && Math.hypot(e.clientX - drag.sx, e.clientY - drag.sy) < 5) {
+        return;
+      }
+      drag.moved = true;
+      bar.classList.add("fm-dragging");
+      placeAt(e.clientX - drag.dx, e.clientY - drag.dy);
+    });
+    const endDrag = e => {
+      if (!drag || e.pointerId !== drag.id) {
+        return;
+      }
+      if (drag.moved) {
+        const p = area();
+        const x = parseFloat(bar.style.left) / p.clientWidth;
+        const y = parseFloat(bar.style.top) / p.clientHeight;
+        try {
+          Services.prefs.setStringPref(POS_PREF, `${x.toFixed(4)},${y.toFixed(4)}`);
+        } catch (err) {}
+        // после перетаскивания клик по названию не должен переключать вкладку
+        bar.addEventListener("click", ev => ev.stopPropagation(), { capture: true, once: true });
+      }
+      bar.classList.remove("fm-dragging");
+      drag = null;
+    };
+    bar.addEventListener("pointerup", endDrag);
+    bar.addEventListener("pointercancel", endDrag);
+    // двойной клик по пустому месту — вернуть плашку вниз по центру
+    bar.addEventListener("dblclick", e => {
+      if (e.target.closest(".fm-nowbar-btn")) {
+        return;
+      }
+      try {
+        Services.prefs.clearUserPref(POS_PREF);
+      } catch (err) {}
+      bar.removeAttribute("data-moved");
+      bar.style.left = bar.style.top = bar.style.bottom = "";
+    });
+    win.addEventListener("resize", () => bar.classList.contains("fm-in") && placeSaved());
 
     title.addEventListener("click", () => current && (gB.selectedTab = current));
     play.addEventListener("click", () => {
@@ -324,6 +415,24 @@
       }
       render();
     });
+    const mediaKey = (main, alt) => {
+      const mc = current && controller(current);
+      if (!mc) {
+        return;
+      }
+      try {
+        const keys = [...(mc.supportedKeys || [])];
+        if (keys.includes(main)) {
+          main === "previoustrack" ? mc.prevTrack() : mc.nextTrack();
+        } else if (keys.includes(alt)) {
+          alt === "seekbackward" ? mc.seekBackward(10) : mc.seekForward(10);
+        }
+      } catch (e) {
+        log("now bar: назад/вперёд не сработало", e);
+      }
+    };
+    prev.addEventListener("click", () => mediaKey("previoustrack", "seekbackward"));
+    next.addEventListener("click", () => mediaKey("nexttrack", "seekforward"));
     mute.addEventListener("click", () => {
       current?.toggleMuteAudio();
       render();

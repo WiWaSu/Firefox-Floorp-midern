@@ -449,6 +449,7 @@ CONTENT = r"""
   }
   .group.cursor-pointer:has(input[readonly]) input::placeholder { color: rgb(255 255 255 / .78) !important; }
   .group.cursor-pointer:has(input[readonly]) :is(input, input:focus, input:hover) {
+    appearance: none !important;
     background: transparent !important;
     border: 0 !important;
     box-shadow: none !important;
@@ -478,6 +479,7 @@ CONTENT = r"""
   html body button.fixed.bottom-4.right-4,
   html body button.fixed.bottom-4.right-4:hover {
     background: rgb(255 255 255 / .14) !important;
+    appearance: none !important;
     color: #fff !important;
     border-radius: 999px !important;
     width: 44px !important; height: 44px !important;

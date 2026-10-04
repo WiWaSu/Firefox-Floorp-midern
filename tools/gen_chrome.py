@@ -368,6 +368,13 @@ moz-urlbar:not([focused], [open]) .urlbar-input { text-align: center !important;
 .fm-nowbar[data-muted] .fm-nowbar-mute { background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='context-fill' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'><path d='M4 9.5v5h3.5L12 18.5v-13L7.5 9.5z' fill='context-fill'/><path d='M16 9.5l5 5M21 9.5l-5 5'/></svg>"); }
 .fm-nowbar-close { background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='context-fill' stroke-width='2' stroke-linecap='round'><path d='M7 7l10 10M17 7L7 17'/></svg>"); background-size: 14px; opacity: .7; }
 :root[fm-nowbar] .fm-toasts { bottom: 76px; }
+.fm-nowbar { cursor: grab; }
+.fm-nowbar.fm-dragging { cursor: grabbing; transition: opacity .25s ease !important; }
+.fm-nowbar[data-moved] { translate: 0 18px; }
+.fm-nowbar[data-moved].fm-in { translate: 0 0; }
+.fm-nowbar-btn[hidden] { display: none !important; }
+.fm-nowbar-prev { background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='context-fill'><rect x='5' y='6' width='2.4' height='12' rx='1.2'/><path d='M18.5 6.6v10.8a1 1 0 0 1-1.55.83L9.3 13.07a1.3 1.3 0 0 1 0-2.14l7.65-5.16a1 1 0 0 1 1.55.83z'/></svg>"); }
+.fm-nowbar-next { background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='context-fill'><rect x='16.6' y='6' width='2.4' height='12' rx='1.2'/><path d='M5.5 6.6v10.8a1 1 0 0 0 1.55.83l7.65-5.16a1.3 1.3 0 0 0 0-2.14L7.05 5.77A1 1 0 0 0 5.5 6.6z'/></svg>"); }
 
 
 /* ======== НОВЫЕ ФУНКЦИИ (скрипт floorp-modern.uc.js) ======== */
@@ -1011,6 +1018,16 @@ CONTENT = r"""
     color: #fff !important;
   }
   .group.cursor-pointer:has(input[readonly]) input::placeholder { color: rgb(255 255 255 / .72) !important; }
+  /* Firefox рисует поля и кнопки системным стилем Windows (чёрный прямоугольник),
+     пользовательские стили его не отключают — выключаем явно */
+  .group.cursor-pointer:has(input[readonly]) :is(input, input:focus, input:hover) {
+    appearance: none !important;
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    outline: none !important;
+  }
+  button.fixed.bottom-4.right-4 { appearance: none !important; border-radius: 999px !important; }
   .group.cursor-pointer:has(input[readonly]) svg { color: #fff !important; }
 
   /* ярлыки сайтов: стеклянный «док» с круглыми иконками */

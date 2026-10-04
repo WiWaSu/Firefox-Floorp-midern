@@ -2,7 +2,7 @@
 
 **A redesign for [Floorp](https://floorp.app) and Firefox on Windows in two styles — Samsung One UI or iOS 26 Liquid Glass — with a reworked built-in PDF viewer.**
 
-[Русская версия ниже](#русский) · Version **1.4.2** · [Changelog](CHANGELOG.md)
+[Русская версия ниже](#русский) · Version **1.5.0** · [Changelog](CHANGELOG.md)
 
 ![New tab page preview](docs/newtab-preview.png)
 
@@ -28,7 +28,7 @@
 - `Alt+Shift+C` copies the current page address (with a toast).
 - “Downloaded: file” toast when a download finishes.
 - Theme button on the toolbar: Auto / Light / Dark in one click.
-- **Now Bar**: music playing in another tab shows a small bar at the bottom with pause, mute and “go to tab”.
+- **Now Bar**: music playing in another tab shows a small draggable bar with previous/next, pause, mute and “go to tab”.
 - Toasts for page zoom and tab mute.
 - `Alt+Shift+D` closes duplicate tabs, `Alt+Shift+Z` toggles focus mode (hides bookmarks and sidebars).
 - Address centered while not editing, springy menus and buttons.
@@ -132,7 +132,7 @@ This is an unofficial community mod. It is not affiliated with or endorsed by Mo
 - `Alt+Shift+C` копирует адрес страницы.
 - Уведомление «Загружено: файл».
 - Кнопка темы на панели: Авто, Светлая или Тёмная.
-- **Now Bar**: если музыка играет в другой вкладке, внизу появляется плашка с паузой, звуком и переходом к вкладке.
+- **Now Bar**: если музыка играет в другой вкладке, появляется плашка с кнопками назад/вперёд, паузой и звуком; её можно перетаскивать.
 - Уведомления о масштабе страницы и выключенном звуке.
 - `Alt+Shift+D` закрывает одинаковые вкладки, `Alt+Shift+Z` включает режим фокуса.
 - Адрес по центру, «пружинящие» меню и кнопки.

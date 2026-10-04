@@ -267,6 +267,16 @@
     color: #fff !important;
   }
   .group.cursor-pointer:has(input[readonly]) input::placeholder { color: rgb(255 255 255 / .72) !important; }
+  /* Firefox рисует поля и кнопки системным стилем Windows (чёрный прямоугольник),
+     пользовательские стили его не отключают — выключаем явно */
+  .group.cursor-pointer:has(input[readonly]) :is(input, input:focus, input:hover) {
+    appearance: none !important;
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    outline: none !important;
+  }
+  button.fixed.bottom-4.right-4 { appearance: none !important; border-radius: 999px !important; }
   .group.cursor-pointer:has(input[readonly]) svg { color: #fff !important; }
 
   /* ярлыки сайтов: стеклянный «док» с круглыми иконками */
