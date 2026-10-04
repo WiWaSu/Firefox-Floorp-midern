@@ -251,10 +251,10 @@ export class FloorpPdfTweaksChild extends JSWindowActorChild {
 
   /* ------------------------------- ink ------------------------------- */
 
-  /* Палитра цветов вместо системного окна Windows «Цвет» (оно из 90-х).
+  /* Своя палитра вместо системного окна Windows «Цвет» (оно из 90-х).
      Ловим клик по <input type="color"> в панели рисования/текста и
-     показываем свою всплывающую палитру. «Другой цвет…» открывает
-     системное окно, если очень нужен точный оттенок. */
+     показываем всплывающую палитру: готовые цвета + свой цвет
+     (поле оттенка/яркости, полоса цветов, HEX). Системное окно не открывается никогда. */
   #setupColorPicker() {
     const doc = this.document;
     const win = this.contentWindow;
@@ -265,9 +265,43 @@ export class FloorpPdfTweaksChild extends JSWindowActorChild {
       "#30B0C7", "#007AFF", "#5856D6", "#AF52DE", "#FF2D55",
       "#A2845E", "#FF6B6B", "#FFD60A", "#64D2FF", "#BF5AF2",
     ];
+    const recent = [];
     let pop = null;
     let target = null;
-    let allowNative = false;
+
+    const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+    const toHex = n => Math.round(n).toString(16).padStart(2, "0");
+    const hsvToHex = (h, sat, val) => {
+      const f = n => {
+        const k = (n + h / 60) % 6;
+        return val - val * sat * Math.max(0, Math.min(k, 4 - k, 1));
+      };
+      return "#" + toHex(f(5) * 255) + toHex(f(3) * 255) + toHex(f(1) * 255);
+    };
+    const hexToHsv = hex => {
+      const m = /^#?([0-9a-f]{6})$/i.exec(String(hex || "").trim());
+      if (!m) {
+        return null;
+      }
+      const n = parseInt(m[1], 16);
+      const r = (n >> 16 & 255) / 255, g = (n >> 8 & 255) / 255, b = (n & 255) / 255;
+      const max = Math.max(r, g, b), d = max - Math.min(r, g, b);
+      let h = 0;
+      if (d) {
+        h = max === r ? ((g - b) / d) % 6 : max === g ? (b - r) / d + 2 : (r - g) / d + 4;
+        h = (h * 60 + 360) % 360;
+      }
+      return { h, s: max ? d / max : 0, v: max };
+    };
+    // стиль задаём строкой атрибута: так CSS-переменные точно доходят до страницы
+    const css = (node, props) => node.setAttribute("style", Object.entries(props).map(([k, v]) => `${k}:${v}`).join(";"));
+    const el = (tag, cls) => {
+      const e = doc.createElement(tag);
+      if (cls) {
+        e.className = cls;
+      }
+      return e;
+    };
 
     const close = () => {
       pop?.remove();
@@ -280,53 +314,153 @@ export class FloorpPdfTweaksChild extends JSWindowActorChild {
       if (!input) {
         return;
       }
-      input.value = color;
+      const c = color.toLowerCase();
+      if (!COLORS.some(x => x.toLowerCase() === c)) {
+        const i = recent.indexOf(c);
+        if (i >= 0) {
+          recent.splice(i, 1);
+        }
+        recent.unshift(c);
+        recent.length = Math.min(recent.length, 5);
+      }
+      input.value = c;
       input.dispatchEvent(new win.Event("input", { bubbles: true }));
       input.dispatchEvent(new win.Event("change", { bubbles: true }));
     };
+    const dot = (c, current) => {
+      const b = el("button", "x-dot");
+      b.type = "button";
+      css(b, { "--c": c });
+      b.title = c.toUpperCase();
+      if (c.toLowerCase() === current) {
+        b.setAttribute("aria-pressed", "true");
+      }
+      b.addEventListener("click", () => apply(c), { signal });
+      return b;
+    };
+    const place = input => {
+      const r = input.getBoundingClientRect();
+      const w = pop.offsetWidth, h = pop.offsetHeight;
+      const below = r.bottom + 10;
+      css(pop, {
+        left: clamp(r.left + r.width / 2 - w / 2, 8, win.innerWidth - w - 8) + "px",
+        top: (below + h > win.innerHeight - 8 ? Math.max(8, r.top - h - 10) : below) + "px",
+      });
+    };
+
+    // свой цвет: поле насыщенность/яркость, полоса оттенка, HEX
+    const buildCustom = (input, start) => {
+      const hsv = hexToHsv(start) || { h: 210, s: 1, v: 1 };
+      const box = el("div", "x-custom");
+      const sv = el("div", "x-sv");
+      const svKnob = el("div", "x-knob");
+      sv.append(svKnob);
+      const hue = el("div", "x-hue");
+      const hueKnob = el("div", "x-knob");
+      hue.append(hueKnob);
+      const row = el("div", "x-row");
+      const preview = el("div", "x-preview");
+      const hex = el("input", "x-hex");
+      hex.type = "text";
+      hex.maxLength = 7;
+      hex.spellcheck = false;
+      const ok = el("button", "x-ok");
+      ok.type = "button";
+      ok.textContent = "Готово";
+      row.append(preview, hex, ok);
+      box.append(sv, hue, row);
+
+      const render = (fromHex = false) => {
+        const c = hsvToHex(hsv.h, hsv.s, hsv.v);
+        css(sv, { "--h": `hsl(${hsv.h.toFixed(1)} 100% 50%)` });
+        css(svKnob, { left: (hsv.s * 100).toFixed(2) + "%", top: ((1 - hsv.v) * 100).toFixed(2) + "%", "--c": c });
+        css(hueKnob, { left: (hsv.h / 360 * 100).toFixed(2) + "%", "--c": `hsl(${hsv.h.toFixed(1)} 100% 50%)` });
+        css(preview, { "--c": c });
+        if (!fromHex) {
+          hex.value = c.toUpperCase();
+        }
+      };
+      const drag = (area, onMove) => {
+        const go = e => {
+          const r = area.getBoundingClientRect();
+          onMove(clamp((e.clientX - r.left) / r.width, 0, 1), clamp((e.clientY - r.top) / r.height, 0, 1));
+          render();
+        };
+        area.addEventListener("pointerdown", e => {
+          e.preventDefault();
+          area.setPointerCapture(e.pointerId);
+          go(e);
+        }, { signal });
+        area.addEventListener("pointermove", e => {
+          if (area.hasPointerCapture(e.pointerId)) {
+            go(e);
+          }
+        }, { signal });
+      };
+      drag(sv, (x, y) => { hsv.s = x; hsv.v = 1 - y; });
+      drag(hue, x => { hsv.h = Math.min(359.9, x * 360); });
+      hex.addEventListener("input", () => {
+        let v = hex.value.trim();
+        if (!v.startsWith("#")) {
+          v = "#" + v;
+        }
+        const parsed = hexToHsv(v);
+        if (parsed) {
+          Object.assign(hsv, parsed);
+          render(true);
+        }
+      }, { signal });
+      hex.addEventListener("keydown", e => {
+        e.stopPropagation();
+        if (e.key === "Enter") {
+          apply(hsvToHex(hsv.h, hsv.s, hsv.v));
+        } else if (e.key === "Escape") {
+          close();
+        }
+      }, { signal });
+      ok.addEventListener("click", () => apply(hsvToHex(hsv.h, hsv.s, hsv.v)), { signal });
+      render();
+      return box;
+    };
+
     const open = input => {
       close();
       target = input;
-      pop = doc.createElement("div");
-      pop.id = "xColorPop";
-      const grid = doc.createElement("div");
-      grid.className = "x-grid";
       const current = String(input.value || "").toLowerCase();
+      pop = el("div");
+      pop.id = "xColorPop";
+      const grid = el("div", "x-grid");
       for (const c of COLORS) {
-        const b = doc.createElement("button");
-        b.className = "x-dot";
-        b.style.setProperty("--c", c);
-        b.title = c;
-        if (c.toLowerCase() === current) {
-          b.setAttribute("aria-pressed", "true");
-        }
-        b.addEventListener("click", () => apply(c), { signal });
-        grid.append(b);
+        grid.append(dot(c, current));
       }
-      const more = doc.createElement("button");
-      more.className = "x-more";
-      more.textContent = "Другой цвет…";
-      more.addEventListener("click", () => {
-        const input2 = target;
-        close();
-        if (input2) {
-          allowNative = true;
-          input2.click();
-          allowNative = false;
+      pop.append(grid);
+      if (recent.length) {
+        const r = el("div", "x-grid x-recent");
+        for (const c of recent) {
+          r.append(dot(c, current));
         }
+        pop.append(r);
+      }
+      const more = el("button", "x-more");
+      more.type = "button";
+      more.textContent = "Свой цвет…";
+      more.addEventListener("click", () => {
+        if (pop.querySelector(".x-custom")) {
+          return;
+        }
+        more.remove();
+        pop.append(buildCustom(input, current));
+        place(input);
+        pop.querySelector(".x-hex")?.focus();
       }, { signal });
-      pop.append(grid, more);
+      pop.append(more);
       doc.body.append(pop);
-      const r = input.getBoundingClientRect();
-      const w = pop.offsetWidth;
-      const left = Math.max(8, Math.min(r.left + r.width / 2 - w / 2, win.innerWidth - w - 8));
-      pop.style.left = left + "px";
-      pop.style.top = (r.bottom + 10) + "px";
+      place(input);
     };
 
     doc.addEventListener("click", e => {
       const input = e.target?.closest?.('input[type="color"]');
-      if (!input || allowNative) {
+      if (!input) {
         return;
       }
       e.preventDefault();
@@ -339,8 +473,9 @@ export class FloorpPdfTweaksChild extends JSWindowActorChild {
     }, { capture: true, signal });
     doc.addEventListener("keydown", e => {
       const input = e.target?.closest?.('input[type="color"]');
-      if (input && !allowNative && (e.key === "Enter" || e.key === " ")) {
+      if (input && (e.key === "Enter" || e.key === " ")) {
         e.preventDefault();
+        e.stopPropagation();
         open(input);
       } else if (e.key === "Escape" && pop) {
         close();

@@ -417,32 +417,73 @@
   & #xThemeMenu button:hover { background: var(--x-hover); }
   & #xThemeMenu button[aria-pressed="true"] { background: var(--x-accent); color: var(--x-on-accent); }
   & #xThemeMenu .x-sw { width: 11px; height: 11px; border-radius: 50%; border: 1px solid var(--x-line); flex: none; }
-  /* своя палитра вместо системного окна «Цвет» */
+  /* своя палитра вместо системного окна «Цвет»: всё с !important,
+     иначе общие правила для кнопок просмотрщика перекрашивают кружки */
   & #xColorPop {
-    position: fixed; z-index: 100000;
-    padding: 12px; border-radius: 22px;
-    background: var(--x-bar); color: var(--x-ink);
-    border: 1px solid var(--x-line);
-    box-shadow: var(--x-pop);
+    position: fixed !important; z-index: 100000 !important;
+    width: 234px !important; box-sizing: border-box !important;
+    padding: 12px !important; border-radius: 22px !important;
+    background: var(--x-bar) !important; color: var(--x-ink) !important;
+    border: 1px solid var(--x-line) !important;
+    box-shadow: var(--x-pop) !important;
     animation: x-pop .18s cubic-bezier(.2, .9, .3, 1.15) both;
   }
-  & #xColorPop .x-grid { display: grid; grid-template-columns: repeat(5, 30px); gap: 8px; }
-  & #xColorPop .x-dot {
-    width: 30px; height: 30px; padding: 0; border-radius: 50%; cursor: pointer;
-    background: var(--c); border: 0;
-    box-shadow: inset 0 0 0 1px rgb(128 128 128 / .35);
-    transition: transform .15s ease;
+  & #xColorPop .x-grid { display: grid !important; grid-template-columns: repeat(5, 34px) !important; gap: 8px !important; justify-content: space-between !important; }
+  & #xColorPop .x-recent { margin-top: 10px !important; padding-top: 10px !important; border-top: 1px solid var(--x-line) !important; }
+  & #xColorPop button.x-dot {
+    width: 34px !important; height: 34px !important; min-width: 0 !important;
+    padding: 0 !important; margin: 0 !important; border: 0 !important;
+    border-radius: 50% !important; cursor: pointer !important;
+    background: var(--c) !important; background-image: none !important;
+    box-shadow: inset 0 0 0 1px rgb(128 128 128 / .4) !important;
+    outline: none !important;
+    transition: transform .15s ease !important;
   }
-  & #xColorPop .x-dot:hover { transform: scale(1.12); }
-  & #xColorPop .x-dot[aria-pressed="true"] {
-    box-shadow: inset 0 0 0 1px rgb(128 128 128 / .35), 0 0 0 2px var(--x-bar), 0 0 0 4px var(--x-accent);
+  & #xColorPop button.x-dot:hover { transform: scale(1.12) !important; background: var(--c) !important; }
+  & #xColorPop button.x-dot[aria-pressed="true"] {
+    box-shadow: inset 0 0 0 1px rgb(128 128 128 / .4), 0 0 0 2px var(--x-bar), 0 0 0 4px var(--x-accent) !important;
   }
-  & #xColorPop .x-more {
-    display: block; width: 100%; margin-top: 10px; padding: 8px 12px;
-    border: 0; border-radius: 999px; cursor: pointer;
-    background: var(--x-hover); color: var(--x-ink); font: inherit; font-size: 13px;
+  & #xColorPop button.x-more, & #xColorPop button.x-ok {
+    display: block !important; width: 100% !important; height: auto !important; min-width: 0 !important;
+    margin: 10px 0 0 !important; padding: 9px 12px !important;
+    border: 0 !important; border-radius: 999px !important; cursor: pointer !important;
+    background: var(--x-hover) !important; color: var(--x-ink) !important;
+    font: 500 13px "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif !important;
   }
-  & #xColorPop .x-more:hover { background: var(--x-press); }
+  & #xColorPop button.x-more:hover { background: var(--x-press) !important; }
+  & #xColorPop .x-custom { margin-top: 12px !important; display: flex !important; flex-direction: column !important; gap: 10px !important; }
+  & #xColorPop .x-sv {
+    position: relative !important; height: 130px !important; border-radius: 14px !important;
+    background: linear-gradient(to top, #000, transparent), linear-gradient(to right, #fff, transparent), var(--h, #f00) !important;
+    cursor: crosshair !important; touch-action: none !important;
+  }
+  & #xColorPop .x-hue {
+    position: relative !important; height: 14px !important; border-radius: 999px !important;
+    background: linear-gradient(to right, #f00, #ff0 17%, #0f0 33%, #0ff 50%, #00f 67%, #f0f 83%, #f00) !important;
+    cursor: pointer !important; touch-action: none !important;
+  }
+  & #xColorPop .x-knob {
+    position: absolute !important; width: 18px !important; height: 18px !important;
+    border-radius: 50% !important; translate: -50% -50% !important; pointer-events: none !important;
+    background: var(--c) !important;
+    box-shadow: 0 0 0 3px #fff, 0 1px 6px rgb(0 0 0 / .5) !important;
+  }
+  & #xColorPop .x-hue .x-knob { top: 50% !important; }
+  & #xColorPop .x-row { display: flex !important; align-items: center !important; gap: 8px !important; }
+  & #xColorPop .x-preview {
+    flex: none !important; width: 32px !important; height: 32px !important; border-radius: 50% !important;
+    background: var(--c) !important; box-shadow: inset 0 0 0 1px rgb(128 128 128 / .4) !important;
+  }
+  & #xColorPop input.x-hex {
+    flex: 1 !important; min-width: 0 !important; height: 32px !important; box-sizing: border-box !important;
+    padding: 0 12px !important; border-radius: 999px !important; border: 1px solid var(--x-line) !important;
+    background: var(--x-field) !important; color: var(--x-ink) !important;
+    font: 600 13px ui-monospace, "Cascadia Mono", Consolas, monospace !important; text-transform: uppercase !important;
+  }
+  & #xColorPop button.x-ok {
+    flex: none !important; width: auto !important; margin: 0 !important; padding: 7px 14px !important;
+    background: var(--x-accent) !important; color: var(--x-on-accent) !important; font-weight: 600 !important;
+  }
   @keyframes x-pop { from { opacity: 0; transform: translateY(-6px) scale(.96); } }
 
   /* полосы прокрутки */
