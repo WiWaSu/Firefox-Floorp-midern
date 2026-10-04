@@ -490,6 +490,25 @@ CONTENT = r"""
   html body button.fixed.bottom-4.right-4:hover { background: rgb(255 255 255 / .24) !important; }
   html body button.fixed.bottom-4.right-4 svg { color: #fff !important; stroke: currentColor; opacity: .95; }
 }
+/* ---------- скриншот страницы: стеклянная панель, как в iOS ---------- */
+#screenshots-component { --fm-shot-accent: #0A84FF; }
+#screenshots-component #buttons-container,
+#screenshots-component #selection-size {
+  background: rgb(40 40 46 / .55) !important;
+  background-image: linear-gradient(180deg, rgb(255 255 255 / .16), transparent 60%) !important;
+  backdrop-filter: blur(24px) saturate(190%) !important;
+  border: 0 !important;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / .35), inset 0 0 0 1px rgb(255 255 255 / .08), 0 14px 40px rgb(0 0 0 / .4) !important;
+}
+#screenshots-component .screenshots-button { background: rgb(255 255 255 / .1) !important; }
+#screenshots-component #download {
+  background: linear-gradient(180deg, #3D9BFF, #0A84FF 65%) !important;
+  color: #fff !important;
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / .4) !important;
+}
+#screenshots-component .highlight { border-radius: 14px !important; }
+#screenshots-component .mover { box-shadow: 0 0 0 2px #0A84FF, 0 2px 8px rgb(0 0 0 / .45) !important; }
+
 /* ---------- плашка доступа к экрану: стеклянная капсула ---------- */
 @-moz-document url("chrome://browser/content/webrtcIndicator.xhtml") {
   body {

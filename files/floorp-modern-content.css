@@ -300,6 +300,74 @@
   }
 }
 
+/* ---------- скриншот страницы (Ctrl+Shift+S): панель и рамка в стиле One UI ---------- */
+#screenshots-component {
+  --fm-shot-accent: AccentColor;
+  font: 500 13px "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif !important;
+}
+#screenshots-component #buttons-container {
+  padding: 6px !important;
+  border-radius: 999px !important;
+  background: #17181a !important;
+  color: #f2f2f3 !important;
+  border: 1px solid rgb(255 255 255 / .1) !important;
+  box-shadow: 0 12px 34px rgb(0 0 0 / .45) !important;
+}
+#screenshots-component .screenshots-button {
+  min-height: 38px !important;
+  padding: 0 16px !important;
+  margin-inline: 3px !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: rgb(255 255 255 / .09) !important;
+  color: #f2f2f3 !important;
+  font: inherit !important;
+  outline: none !important;
+  box-shadow: none !important;
+  transition: background-color .15s ease, scale .2s cubic-bezier(.3, 1.6, .5, 1) !important;
+}
+#screenshots-component .screenshots-button:hover { background: rgb(255 255 255 / .16) !important; }
+#screenshots-component .screenshots-button:active { scale: .94; }
+#screenshots-component .screenshots-button:focus-visible { outline: 2px solid var(--fm-shot-accent) !important; outline-offset: 2px !important; }
+#screenshots-component #cancel { width: 38px !important; min-width: 38px !important; padding: 0 !important; }
+#screenshots-component #download {
+  background: var(--fm-shot-accent) !important;
+  color: AccentColorText !important;
+  font-weight: 600 !important;
+}
+#screenshots-component #download:hover { background: color-mix(in srgb, var(--fm-shot-accent) 85%, white) !important; }
+#screenshots-component #selection-size {
+  padding: 4px 12px !important;
+  border-radius: 999px !important;
+  border: 1px solid rgb(255 255 255 / .1) !important;
+  background: #17181a !important;
+  color: #f2f2f3 !important;
+  font: 600 12px "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif !important;
+  font-variant-numeric: tabular-nums !important;
+}
+#screenshots-component .highlight {
+  border: 2px solid rgb(255 255 255 / .95) !important;
+  border-radius: 6px !important;
+  box-shadow: 0 0 0 1px rgb(0 0 0 / .25), 0 0 24px rgb(0 0 0 / .25) !important;
+}
+#screenshots-component #hover-highlight {
+  border: 2px solid var(--fm-shot-accent) !important;
+  border-radius: 8px !important;
+  background: color-mix(in srgb, var(--fm-shot-accent) 16%, transparent) !important;
+}
+#screenshots-component .mover {
+  background: #fff !important;
+  box-shadow: 0 0 0 3px var(--fm-shot-accent), 0 2px 8px rgb(0 0 0 / .45) !important;
+}
+#screenshots-component #screenshots-cancel-button {
+  border-radius: 999px !important;
+  padding: 8px 20px !important;
+  border: 1px solid rgb(255 255 255 / .7) !important;
+  background: rgb(0 0 0 / .25) !important;
+}
+#screenshots-component #screenshots-cancel-button:hover { background: #fff !important; color: #000 !important; }
+#screenshots-component .preview-instructions { font: 600 22px "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif !important; }
+
 /* ---------- плашка «Вы предоставляете доступ к экрану» ---------- */
 @-moz-document url("chrome://browser/content/webrtcIndicator.xhtml") {
   body {
