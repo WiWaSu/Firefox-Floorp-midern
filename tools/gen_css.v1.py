@@ -69,23 +69,23 @@ CSS = r"""
   /* ---------- НАСТРОЙКИ: меняйте тут ---------- */
   & {
     /* Цвет акцента (активный инструмент, выделение, текущая страница) */
-    --x-accent: light-dark(AccentColor, color-mix(in srgb, AccentColor 62%, white)) !important;
-    --x-on-accent: light-dark(AccentColorText, color-mix(in srgb, AccentColor 22%, black)) !important;
+    --x-accent: light-dark(#3d57c9, #8ea2ff) !important;
+    --x-on-accent: light-dark(#ffffff, #10142a) !important;
     /* Скругление страниц и отступ между ними */
-    --x-radius: 10px;
+    --x-radius: 4px;
     --x-gap: 18px;
   }
   /* -------------------------------------------- */
 
   & {
-    --x-ground:  light-dark(#f2f3f5, #000000);
-    --x-bar:     light-dark(#ffffff, #17181a);
-    --x-well:    light-dark(#eef0f3, #242528);
-    --x-rail:    light-dark(#f2f3f5, #000000);
-    --x-line:    light-dark(rgb(0 0 0 / .08), rgb(255 255 255 / .08));
-    --x-ink:     light-dark(#111214, #f2f2f3);
-    --x-muted:   light-dark(#6b6f76, #9a9da3);
-    --x-field:   light-dark(#ffffff, #2a2b2e);
+    --x-ground:  light-dark(#e7e9ee, #15171d);
+    --x-bar:     light-dark(#f7f8fa, #1d2028);
+    --x-well:    light-dark(#eceef3, #16181e);
+    --x-rail:    light-dark(#eef0f4, #191c23);
+    --x-line:    light-dark(#d6dae3, #2e3340);
+    --x-ink:     light-dark(#1c2130, #e4e7ef);
+    --x-muted:   light-dark(#646c80, #9098ab);
+    --x-field:   light-dark(#ffffff, #23262f);
     --x-hover:   light-dark(rgb(28 33 48 / .08), rgb(228 231 239 / .09));
     --x-press:   light-dark(rgb(28 33 48 / .14), rgb(228 231 239 / .15));
     --x-soft:    color-mix(in srgb, var(--x-accent) 16%, transparent);
@@ -176,7 +176,7 @@ CSS = r"""
   &[data-x-page="night"] { --x-page-filter: invert(.88) hue-rotate(180deg) contrast(.9); }
 
   &, & body, & button, & input, & select, & menu {
-    font-family: "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif !important;
+    font-family: "Segoe UI Variable Text", "Segoe UI", system-ui, sans-serif !important;
   }
 
   /* ================= ПАНЕЛЬ ИНСТРУМЕНТОВ ================= */
@@ -196,8 +196,7 @@ CSS = r"""
   & #toolbarViewerRight > .toolbarHorizontalGroup:not(#editorModeButtons) {
     background: var(--x-well) !important;
     border: 1px solid var(--x-line) !important;
-    border-radius: 999px !important;
-    box-shadow: inset 0 1px 0 light-dark(rgb(255 255 255 / .9), rgb(255 255 255 / .06)), 0 1px 3px light-dark(rgb(0 0 0 / .06), rgb(0 0 0 / .5)) !important;
+    border-radius: 11px !important;
     padding: 0 3px !important;
     gap: 2px !important;
     height: 40px !important;
@@ -225,7 +224,7 @@ CSS = r"""
     margin: 0 !important;
     min-width: 0 !important;
   }
-  & #toolbarViewer .toolbarButtonWithContainer:not([hidden], #editorComment) {
+  & #toolbarViewer .toolbarButtonWithContainer:not([hidden]) {
     height: auto !important;
     display: flex !important;
     align-items: center !important;
@@ -238,7 +237,7 @@ CSS = r"""
     margin: 0 !important;
     padding: 0 !important;
     flex: none !important;
-    border-radius: 999px !important;
+    border-radius: 8px !important;
     transition: background-color .12s ease, transform .08s ease !important;
   }
   & .toolbarButton:hover { background-color: var(--x-hover) !important; }
@@ -265,10 +264,9 @@ CSS = r"""
     color: var(--x-ink) !important;
     font-variant-numeric: tabular-nums !important;
     font-weight: 600 !important;
-    border-radius: 999px !important;
   }
   & #numPages { color: var(--x-muted) !important; font-variant-numeric: tabular-nums !important; padding-inline: 4px 8px !important; }
-  & #scaleSelectContainer { height: 32px !important; border-radius: 999px !important; display: flex !important; align-items: center !important; }
+  & #scaleSelectContainer { height: 32px !important; border-radius: 8px !important; display: flex !important; align-items: center !important; }
   & #scaleSelectContainer:hover { background: var(--x-hover) !important; }
   & #scaleSelect {
     height: 32px !important;
@@ -276,7 +274,7 @@ CSS = r"""
     background-color: transparent !important;
     color: var(--x-ink) !important;
     font-weight: 500 !important;
-    border-radius: 999px !important;
+    border-radius: 8px !important;
     padding-inline: 10px 26px !important;
   }
   & :is(.toolbarField, #findInput, #scaleSelect, #pageNumber):focus {
@@ -288,27 +286,27 @@ CSS = r"""
   & :is(.doorHanger, .doorHangerRight, #findbar, #secondaryToolbar, .editorParamsToolbar:not(#editorCommentParamsToolbar), .popupMenu, #xThemeMenu) {
     background: var(--x-bar) !important;
     border: 1px solid var(--x-line) !important;
-    border-radius: 24px !important;
+    border-radius: 12px !important;
     box-shadow: var(--x-pop) !important;
   }
   & :is(.doorHanger, .doorHangerRight)::before,
   & :is(.doorHanger, .doorHangerRight)::after { display: none !important; }
   & :is(#secondaryToolbar, .popupMenu) { padding: 6px !important; }
   & :is(#secondaryToolbarButtonContainer, .popupMenu) :is(button, .toolbarButton) {
-    border-radius: 14px !important;
-    min-height: 36px !important;
+    border-radius: 7px !important;
+    min-height: 34px !important;
   }
   & :is(#secondaryToolbarButtonContainer, .popupMenu) :is(button, .toolbarButton):hover {
     background: var(--x-hover) !important;
   }
   & #findbar { padding: 6px !important; gap: 6px !important; }
   & #findInput {
-    border-radius: 999px !important;
+    border-radius: 8px !important;
     border: 1px solid var(--x-line) !important;
     background: var(--x-field) !important;
     padding-inline: 10px !important;
   }
-  & .toggleButton.toolbarLabel { border-radius: 999px !important; }
+  & .toggleButton.toolbarLabel { border-radius: 7px !important; }
   & .toggleButton.toolbarLabel:hover { background: var(--x-hover) !important; }
   & #findResultsCount, & #findMsg { color: var(--x-muted) !important; }
 
@@ -325,22 +323,22 @@ CSS = r"""
   & .editToolbar {
     background: var(--x-bar) !important;
     border: 1px solid var(--x-line) !important;
-    border-radius: 999px !important;
+    border-radius: 10px !important;
     box-shadow: var(--x-pop) !important;
     padding: 3px !important;
   }
-  & .editToolbar button { border-radius: 999px !important; }
+  & .editToolbar button { border-radius: 7px !important; }
   & .editToolbar button:hover { background: var(--x-hover) !important; }
 
   /* диалоги */
   & dialog {
-    border-radius: 26px !important;
+    border-radius: 14px !important;
     border: 1px solid var(--x-line) !important;
     background: var(--x-bar) !important;
     color: var(--x-ink) !important;
     box-shadow: var(--x-pop) !important;
   }
-  & dialog button { border-radius: 999px !important; }
+  & dialog button { border-radius: 8px !important; }
   & dialog button.primaryButton, & dialog #primaryButton {
     background: var(--x-accent) !important; color: var(--x-on-accent) !important; border-color: transparent !important;
   }
@@ -426,44 +424,17 @@ CSS = r"""
   }
   & #xThemeMenu .x-seg {
     display: grid; grid-template-columns: repeat(3, 1fr); gap: 2px;
-    background: var(--x-well); border: 1px solid var(--x-line); border-radius: 999px; padding: 3px;
+    background: var(--x-well); border: 1px solid var(--x-line); border-radius: 9px; padding: 3px;
   }
   & #xThemeMenu .x-seg.x-4 { grid-template-columns: repeat(2, 1fr); }
   & #xThemeMenu button {
-    font: inherit; color: var(--x-ink); background: none; border: 0; border-radius: 999px;
+    font: inherit; color: var(--x-ink); background: none; border: 0; border-radius: 7px;
     height: 30px; padding: 0 8px; cursor: pointer; white-space: nowrap;
     display: flex; align-items: center; justify-content: center; gap: 6px;
   }
   & #xThemeMenu button:hover { background: var(--x-hover); }
   & #xThemeMenu button[aria-pressed="true"] { background: var(--x-accent); color: var(--x-on-accent); }
   & #xThemeMenu .x-sw { width: 11px; height: 11px; border-radius: 50%; border: 1px solid var(--x-line); flex: none; }
-  /* своя палитра вместо системного окна «Цвет» */
-  & #xColorPop {
-    position: fixed; z-index: 100000;
-    padding: 12px; border-radius: 22px;
-    background: var(--x-bar); color: var(--x-ink);
-    border: 1px solid var(--x-line);
-    box-shadow: var(--x-pop);
-    animation: x-pop .18s cubic-bezier(.2, .9, .3, 1.15) both;
-  }
-  & #xColorPop .x-grid { display: grid; grid-template-columns: repeat(5, 30px); gap: 8px; }
-  & #xColorPop .x-dot {
-    width: 30px; height: 30px; padding: 0; border-radius: 50%; cursor: pointer;
-    background: var(--c); border: 0;
-    box-shadow: inset 0 0 0 1px rgb(128 128 128 / .35);
-    transition: transform .15s ease;
-  }
-  & #xColorPop .x-dot:hover { transform: scale(1.12); }
-  & #xColorPop .x-dot[aria-pressed="true"] {
-    box-shadow: inset 0 0 0 1px rgb(128 128 128 / .35), 0 0 0 2px var(--x-bar), 0 0 0 4px var(--x-accent);
-  }
-  & #xColorPop .x-more {
-    display: block; width: 100%; margin-top: 10px; padding: 8px 12px;
-    border: 0; border-radius: 999px; cursor: pointer;
-    background: var(--x-hover); color: var(--x-ink); font: inherit; font-size: 13px;
-  }
-  & #xColorPop .x-more:hover { background: var(--x-press); }
-  @keyframes x-pop { from { opacity: 0; transform: translateY(-6px) scale(.96); } }
 
   /* полосы прокрутки */
   & :is(#viewerContainer, #viewsManagerContent, #outlinesView, #thumbnailsView) {

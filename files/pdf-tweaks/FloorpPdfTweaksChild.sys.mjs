@@ -76,6 +76,11 @@ export class FloorpPdfTweaksChild extends JSWindowActorChild {
     } catch (e) {
       console.error("[pdf-tweaks] ink:", e);
     }
+    try {
+      this.#setupColorPicker();
+    } catch (e) {
+      console.error("[pdf-tweaks] colors:", e);
+    }
   }
 
   #clearTimer() {
@@ -245,6 +250,109 @@ export class FloorpPdfTweaksChild extends JSWindowActorChild {
   }
 
   /* ------------------------------- ink ------------------------------- */
+
+  /* Палитра цветов вместо системного окна Windows «Цвет» (оно из 90-х).
+     Ловим клик по <input type="color"> в панели рисования/текста и
+     показываем свою всплывающую палитру. «Другой цвет…» открывает
+     системное окно, если очень нужен точный оттенок. */
+  #setupColorPicker() {
+    const doc = this.document;
+    const win = this.contentWindow;
+    const signal = this.#ac.signal;
+    const COLORS = [
+      "#000000", "#3A3A3C", "#8E8E93", "#C7C7CC", "#FFFFFF",
+      "#FF3B30", "#FF9500", "#FFCC00", "#34C759", "#00C7BE",
+      "#30B0C7", "#007AFF", "#5856D6", "#AF52DE", "#FF2D55",
+      "#A2845E", "#FF6B6B", "#FFD60A", "#64D2FF", "#BF5AF2",
+    ];
+    let pop = null;
+    let target = null;
+    let allowNative = false;
+
+    const close = () => {
+      pop?.remove();
+      pop = null;
+      target = null;
+    };
+    const apply = color => {
+      const input = target;
+      close();
+      if (!input) {
+        return;
+      }
+      input.value = color;
+      input.dispatchEvent(new win.Event("input", { bubbles: true }));
+      input.dispatchEvent(new win.Event("change", { bubbles: true }));
+    };
+    const open = input => {
+      close();
+      target = input;
+      pop = doc.createElement("div");
+      pop.id = "xColorPop";
+      const grid = doc.createElement("div");
+      grid.className = "x-grid";
+      const current = String(input.value || "").toLowerCase();
+      for (const c of COLORS) {
+        const b = doc.createElement("button");
+        b.className = "x-dot";
+        b.style.setProperty("--c", c);
+        b.title = c;
+        if (c.toLowerCase() === current) {
+          b.setAttribute("aria-pressed", "true");
+        }
+        b.addEventListener("click", () => apply(c), { signal });
+        grid.append(b);
+      }
+      const more = doc.createElement("button");
+      more.className = "x-more";
+      more.textContent = "Другой цвет…";
+      more.addEventListener("click", () => {
+        const input2 = target;
+        close();
+        if (input2) {
+          allowNative = true;
+          input2.click();
+          allowNative = false;
+        }
+      }, { signal });
+      pop.append(grid, more);
+      doc.body.append(pop);
+      const r = input.getBoundingClientRect();
+      const w = pop.offsetWidth;
+      const left = Math.max(8, Math.min(r.left + r.width / 2 - w / 2, win.innerWidth - w - 8));
+      pop.style.left = left + "px";
+      pop.style.top = (r.bottom + 10) + "px";
+    };
+
+    doc.addEventListener("click", e => {
+      const input = e.target?.closest?.('input[type="color"]');
+      if (!input || allowNative) {
+        return;
+      }
+      e.preventDefault();
+      e.stopPropagation();
+      if (target === input) {
+        close();
+      } else {
+        open(input);
+      }
+    }, { capture: true, signal });
+    doc.addEventListener("keydown", e => {
+      const input = e.target?.closest?.('input[type="color"]');
+      if (input && !allowNative && (e.key === "Enter" || e.key === " ")) {
+        e.preventDefault();
+        open(input);
+      } else if (e.key === "Escape" && pop) {
+        close();
+      }
+    }, { capture: true, signal });
+    doc.addEventListener("pointerdown", e => {
+      if (pop && !pop.contains(e.target) && !e.target?.closest?.('input[type="color"]')) {
+        close();
+      }
+    }, { capture: true, signal });
+    win.addEventListener("resize", close, { signal });
+  }
 
   #setupInk() {
     const win = this.contentWindow;

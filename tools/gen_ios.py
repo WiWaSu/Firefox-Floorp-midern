@@ -490,6 +490,21 @@ CONTENT = r"""
   html body button.fixed.bottom-4.right-4:hover { background: rgb(255 255 255 / .24) !important; }
   html body button.fixed.bottom-4.right-4 svg { color: #fff !important; stroke: currentColor; opacity: .95; }
 }
+/* ---------- плашка доступа к экрану: стеклянная капсула ---------- */
+@-moz-document url("chrome://browser/content/webrtcIndicator.xhtml") {
+  body {
+    background: light-dark(rgb(250 250 253 / .96), rgb(34 34 40 / .96)) !important;
+    background-image: linear-gradient(180deg, light-dark(rgb(255 255 255 / .8), rgb(255 255 255 / .12)), transparent 60%) !important;
+    border: 0 !important;
+    box-shadow: inset 0 1px 0 light-dark(#fff, rgb(255 255 255 / .3)), inset 0 0 0 1px light-dark(rgb(0 0 0 / .08), rgb(255 255 255 / .08)) !important;
+  }
+  .stop-button {
+    background: linear-gradient(180deg, #3D9BFF, #0A84FF 65%) !important;
+    color: #fff !important;
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / .4) !important;
+  }
+}
+
 """
 
 # ================================================================ просмотрщик PDF
@@ -536,7 +551,7 @@ PDF = r"""
     box-shadow: var(--x-rim), 0 6px 18px light-dark(rgb(40 50 90 / .14), rgb(0 0 0 / .4)) !important;
     backdrop-filter: blur(18px) saturate(190%) !important;
   }
-  & :is(.doorHanger, .doorHangerRight, #findbar, #secondaryToolbar, .editorParamsToolbar:not(#editorCommentParamsToolbar), .popupMenu, #xThemeMenu) {
+  & :is(.doorHanger, .doorHangerRight, #findbar, #secondaryToolbar, .editorParamsToolbar:not(#editorCommentParamsToolbar), .popupMenu, #xThemeMenu, #xColorPop) {
     background-color: light-dark(rgb(250 250 253 / .78), rgb(34 34 40 / .7)) !important;
     background-image: var(--x-sheen) !important;
     border: 0 !important;
