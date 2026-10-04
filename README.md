@@ -2,7 +2,7 @@
 
 **A redesign for [Floorp](https://floorp.app) and Firefox on Windows in two styles — Samsung One UI or iOS 26 Liquid Glass — with a reworked built-in PDF viewer.**
 
-[Русская версия ниже](#русский) · Version **1.5.0** · [Changelog](CHANGELOG.md)
+[Русская версия ниже](#русский) · Version **1.5.1** · [Changelog](CHANGELOG.md)
 
 ![New tab page preview](docs/newtab-preview.png)
 

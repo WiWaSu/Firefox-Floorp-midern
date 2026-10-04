@@ -294,6 +294,7 @@
         return current;
       }
       pausedByUs = false;
+      mutedByUs = false;
       return [...gB.tabs].reverse().find(t => t.hasAttribute("soundplaying") && !dismissed.has(t)) || null;
     };
     const render = () => {
@@ -302,18 +303,22 @@
       bar.classList.toggle("fm-in", show);
       doc.documentElement.toggleAttribute("fm-nowbar", show);
       if (!current) {
+        if (bar._shown) {
+          bar._shown = false;
+          pollTitle(false);
+        }
         return;
       }
-      title.textContent = current.label || "Музыка";
+      if (!title.textContent || bar.dataset.tab !== String(current.linkedPanel)) {
+        title.textContent = current.label || "Музыка";
+        bar.dataset.tab = String(current.linkedPanel);
+      }
       bar.toggleAttribute("data-paused", pausedByUs);
       bar.toggleAttribute("data-muted", current.hasAttribute("muted"));
-      // «назад/вперёд» показываем, только если сайт их поддерживает (YouTube, Spotify, ВК…)
-      let keys = [];
-      try {
-        keys = [...(controller(current)?.supportedKeys || [])];
-      } catch (e) {}
-      prev.hidden = !keys.includes("previoustrack") && !keys.includes("seekbackward");
-      next.hidden = !keys.includes("nexttrack") && !keys.includes("seekforward");
+      if (show !== bar._shown) {
+        bar._shown = show;
+        pollTitle(show);
+      }
       if (show) {
         placeSaved();
       }
@@ -397,42 +402,121 @@
     win.addEventListener("resize", () => bar.classList.contains("fm-in") && placeSaved());
 
     title.addEventListener("click", () => current && (gB.selectedTab = current));
-    play.addEventListener("click", () => {
-      const mc = current && controller(current);
-      if (!mc) {
-        return;
-      }
+    /* ---- управление звуком в странице ----
+       1) MediaController Firefox — работает там, где сайт сам сообщает о плеере (YouTube).
+       2) Если не помогло — просим страницу (через наш actor) поставить на паузу
+          сами <audio>/<video> (так работает Telegram и другие сайты без Media Session).
+       3) Если звук всё равно играет — выключаем звук вкладки, чтобы «стоп» сработал всегда. */
+    let mutedByUs = false;
+    const pageMedia = async (tab, data) => {
+      const out = [];
       try {
-        if (pausedByUs) {
-          mc.play();
-          pausedByUs = false;
-        } else {
-          mc.pause();
-          pausedByUs = true;
+        for (const bc of tab.linkedBrowser.browsingContext.getAllBrowsingContextsInSubtree()) {
+          const actor = bc.currentWindowGlobal?.getActor("FloorpPdfTweaks");
+          if (actor) {
+            out.push(actor.sendQuery("FM:media", data).catch(() => null));
+          }
         }
       } catch (e) {
-        log("now bar: пауза не сработала", e);
+        log("now bar: страница недоступна", e);
+      }
+      return (await Promise.all(out)).filter(Boolean);
+    };
+    const still = (tab, ms) => new Promise(r => win.setTimeout(() => r(tab.isConnected && tab.hasAttribute("soundplaying")), ms));
+
+    play.addEventListener("click", async () => {
+      const tab = current;
+      if (!tab) {
+        return;
+      }
+      const mc = controller(tab);
+      if (pausedByUs) {
+        pausedByUs = false;
+        if (mutedByUs && tab.hasAttribute("muted")) {
+          tab.toggleMuteAudio();
+        }
+        mutedByUs = false;
+        try { mc?.play(); } catch (e) {}
+        await pageMedia(tab, { action: "play" });
+        render();
+        return;
+      }
+      pausedByUs = true;
+      render();
+      try { mc?.pause(); } catch (e) {}
+      if (await still(tab, 700)) {
+        await pageMedia(tab, { action: "pause" });
+        if (await still(tab, 1600) && !tab.hasAttribute("muted")) {
+          tab.toggleMuteAudio();
+          mutedByUs = true;
+        }
       }
       render();
     });
-    const mediaKey = (main, alt) => {
-      const mc = current && controller(current);
-      if (!mc) {
+    const mediaKey = async (main, alt, delta) => {
+      const tab = current;
+      const mc = tab && controller(tab);
+      if (!tab) {
         return;
       }
+      let keys = [];
       try {
-        const keys = [...(mc.supportedKeys || [])];
+        keys = [...(mc?.supportedKeys || [])];
+      } catch (e) {}
+      try {
         if (keys.includes(main)) {
           main === "previoustrack" ? mc.prevTrack() : mc.nextTrack();
         } else if (keys.includes(alt)) {
           alt === "seekbackward" ? mc.seekBackward(10) : mc.seekForward(10);
+        } else {
+          // сайт не сообщает о плеере: перематываем сам звук на 10 секунд
+          const r = await pageMedia(tab, { action: "seek", delta });
+          if (!r.some(x => x.count)) {
+            toast("Этот сайт не даёт переключать треки", "warn");
+          }
         }
       } catch (e) {
         log("now bar: назад/вперёд не сработало", e);
       }
+      win.setTimeout(refreshTitle, 600);
     };
-    prev.addEventListener("click", () => mediaKey("previoustrack", "seekbackward"));
-    next.addEventListener("click", () => mediaKey("nexttrack", "seekforward"));
+    prev.addEventListener("click", () => mediaKey("previoustrack", "seekbackward", -10));
+    next.addEventListener("click", () => mediaKey("nexttrack", "seekforward", 10));
+
+    /* ---- название трека: Media Session сайта или сам плеер на странице ---- */
+    let titleTimer = 0;
+    async function refreshTitle() {
+      const tab = current;
+      if (!tab) {
+        return;
+      }
+      let name = "";
+      try {
+        const md = controller(tab)?.getMetadata?.();
+        if (md?.title && md.title !== tab.label) {
+          name = md.artist ? `${md.title} — ${md.artist}` : md.title;
+        }
+      } catch (e) {}
+      if (!name) {
+        for (const r of await pageMedia(tab, { action: "info" })) {
+          if (r.title) {
+            name = r.artist ? `${r.title} — ${r.artist}` : r.title;
+            break;
+          }
+        }
+      }
+      if (tab === current) {
+        title.textContent = name || tab.label || "Музыка";
+        title.title = (name ? name + "\n" : "") + (tab.label || "");
+      }
+    }
+    const pollTitle = on => {
+      win.clearInterval(titleTimer);
+      if (on) {
+        refreshTitle();
+        titleTimer = win.setInterval(refreshTitle, 3000);
+      }
+    };
     mute.addEventListener("click", () => {
       current?.toggleMuteAudio();
       render();

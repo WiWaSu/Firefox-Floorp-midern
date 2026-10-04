@@ -37,6 +37,83 @@ export class FloorpPdfTweaksChild extends JSWindowActorChild {
   #timer = 0;
   #prefObserver = null;
 
+  /* Плашка Now Bar в окне спрашивает страницу о плеере:
+     info — название трека, pause/play — пауза для <audio>/<video>, seek — перемотка. */
+  receiveMessage(msg) {
+    if (msg.name !== "FM:media") {
+      return null;
+    }
+    const doc = this.document;
+    const win = this.contentWindow;
+    if (!doc || !win) {
+      return null;
+    }
+    const { action, delta } = msg.data || {};
+    const media = [...doc.querySelectorAll("audio, video")];
+    const text = sel => {
+      for (const s of sel) {
+        const t = doc.querySelector(s)?.textContent?.trim();
+        if (t) {
+          return t;
+        }
+      }
+      return "";
+    };
+    try {
+      if (action === "info") {
+        let title = "", artist = "";
+        try {
+          const md = win.navigator.mediaSession?.metadata;
+          title = md?.title || "";
+          artist = md?.artist || "";
+        } catch {}
+        if (!title) {
+          // плееры Telegram (Web K и Web A) и общие варианты
+          title = text([".pinned-audio-title", ".pinned-container .audio-title", ".AudioPlayer-content .title",
+            ".audio-player .title", "[class*='AudioPlayer'] [class*='title']"]);
+          artist = text([".pinned-audio-subtitle", ".pinned-container .audio-subtitle", ".AudioPlayer-content .subtitle",
+            ".audio-player .subtitle", "[class*='AudioPlayer'] [class*='subtitle']"]);
+        }
+        return { title: title.slice(0, 120), artist: artist.slice(0, 80), playing: media.some(m => !m.paused) };
+      }
+      if (action === "pause") {
+        let count = 0;
+        for (const m of media) {
+          if (!m.paused) {
+            m.setAttribute("data-fm-paused", "1");
+            m.pause();
+            count++;
+          }
+        }
+        return { count };
+      }
+      if (action === "play") {
+        let count = 0;
+        for (const m of media) {
+          if (m.hasAttribute("data-fm-paused")) {
+            m.removeAttribute("data-fm-paused");
+            m.play()?.catch?.(() => {});
+            count++;
+          }
+        }
+        return { count };
+      }
+      if (action === "seek") {
+        let count = 0;
+        for (const m of media) {
+          if (!m.paused || m.hasAttribute("data-fm-paused")) {
+            m.currentTime = Math.max(0, m.currentTime + (Number(delta) || 0));
+            count++;
+          }
+        }
+        return { count };
+      }
+    } catch (e) {
+      return { error: String(e) };
+    }
+    return null;
+  }
+
   handleEvent(event) {
     // один раз на процесс: разбудить запасной загрузчик функций окна
     if (!bootSent) {
