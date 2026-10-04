@@ -42,6 +42,20 @@
   --arrowpanel-background: var(--fm-menu) !important;
   --urlbarview-background-color-selected: light-dark(rgb(0 0 0 / .06), rgb(255 255 255 / .12)) !important;
 }
+/* рамка окна прозрачная: всё, что раньше было «чёрным фоном», теперь показывает обои */
+:root {
+  --fm-frame: transparent !important;
+  --sidebar-background-color: transparent !important;
+  --panel-sidebar-background-color: transparent !important;
+  --toolbox-background-color: transparent !important;
+  --toolbox-background-color-inactive: transparent !important;
+  --toolbar-background-color: transparent !important;
+  --toolbar-bgcolor: transparent !important;
+}
+:root:not([lwtheme]) :is(#sidebar-main, #sidebar-box, #panel-sidebar-select-box, #panel-sidebar-select-box > *, #sidebar-main > *, #vertical-tabs, #tabbrowser-tabs[orient="vertical"], .sidebar-panel-header, #sidebar-header) {
+  background-color: transparent !important;
+  background-image: none !important;
+}
 
 /* ---------- обои под окном: видны вокруг страницы и сквозь стекло ---------- */
 :root:not([lwtheme]) :is(#navigator-toolbox, #nav-bar, #PersonalToolbar, #TabsToolbar, #browser, #sidebar-main, #sidebar-box, #panel-sidebar-select-box, #nora-statusbar) {

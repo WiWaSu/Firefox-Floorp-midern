@@ -90,6 +90,20 @@ CHROME = r"""
   --arrowpanel-background: var(--fm-menu) !important;
   --urlbarview-background-color-selected: light-dark(rgb(0 0 0 / .06), rgb(255 255 255 / .12)) !important;
 }
+/* рамка окна прозрачная: всё, что раньше было «чёрным фоном», теперь показывает обои */
+:root {
+  --fm-frame: transparent !important;
+  --sidebar-background-color: transparent !important;
+  --panel-sidebar-background-color: transparent !important;
+  --toolbox-background-color: transparent !important;
+  --toolbox-background-color-inactive: transparent !important;
+  --toolbar-background-color: transparent !important;
+  --toolbar-bgcolor: transparent !important;
+}
+:root:not([lwtheme]) :is(#sidebar-main, #sidebar-box, #panel-sidebar-select-box, #panel-sidebar-select-box > *, #sidebar-main > *, #vertical-tabs, #tabbrowser-tabs[orient="vertical"], .sidebar-panel-header, #sidebar-header) {
+  background-color: transparent !important;
+  background-image: none !important;
+}
 
 /* ---------- обои под окном: видны вокруг страницы и сквозь стекло ---------- */
 :root:not([lwtheme]) :is(#navigator-toolbox, #nav-bar, #PersonalToolbar, #TabsToolbar, #browser, #sidebar-main, #sidebar-box, #panel-sidebar-select-box, #nora-statusbar) {
@@ -434,6 +448,15 @@ CONTENT = r"""
                 0 22px 60px rgb(5 10 40 / .4) !important;
   }
   .group.cursor-pointer:has(input[readonly]) input::placeholder { color: rgb(255 255 255 / .78) !important; }
+  .group.cursor-pointer:has(input[readonly]) :is(input, input:focus, input:hover) {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    outline: none !important;
+    border-radius: 0 !important;
+    min-height: 0 !important;
+    color: #fff !important;
+  }
 
   /* док с ярлыками: стеклянная полка, иконки — квадраты iOS */
   .inline-block.backdrop-blur-sm.p-3 {
@@ -452,12 +475,20 @@ CONTENT = r"""
     box-shadow: inset 0 1px 0 #fff, 0 6px 16px rgb(0 0 0 / .28) !important;
   }
   a.group.flex.flex-col.items-center:hover { background: rgb(255 255 255 / .12) !important; }
-  button.fixed.bottom-4.right-4 {
-    background-color: rgb(255 255 255 / .14) !important;
+  html body button.fixed.bottom-4.right-4,
+  html body button.fixed.bottom-4.right-4:hover {
+    background: rgb(255 255 255 / .14) !important;
+    color: #fff !important;
+    border-radius: 999px !important;
+    width: 44px !important; height: 44px !important;
+    min-height: 0 !important; padding: 0 !important;
+    display: grid !important; place-items: center !important;
     backdrop-filter: blur(20px) saturate(190%) !important;
     border: 0 !important;
     box-shadow: inset 0 1px 0 rgb(255 255 255 / .5), 0 8px 24px rgb(0 0 0 / .3) !important;
   }
+  html body button.fixed.bottom-4.right-4:hover { background: rgb(255 255 255 / .24) !important; }
+  html body button.fixed.bottom-4.right-4 svg { color: #fff !important; stroke: currentColor; opacity: .95; }
 }
 """
 
