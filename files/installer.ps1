@@ -31,7 +31,7 @@ $ErrorActionPreference = "Stop"
 try { [Console]::OutputEncoding = [Text.Encoding]::UTF8 } catch {}
 
 # версия установщика (меняется вместе с файлом VERSION и CHANGELOG.md)
-$Version = "1.8.4"
+$Version = "1.9.0"
 $Here = $PSScriptRoot
 $Utf8 = New-Object System.Text.UTF8Encoding($false)
 $Ru = $true
@@ -203,7 +203,7 @@ function Get-SettingsCss($o) {
   if (-not $o.Progress) { $chrome += ".fm-progress { display: none !important; }" }
   if (-not $o.Center)   { $chrome += ":root #urlbar:not([focused], [open]) #urlbar-input, :root moz-urlbar:not([focused], [open]) .urlbar-input { text-align: start !important; }" }
   $newtab = @()
-  if (-not $o.Clock)     { $newtab += "  .absolute.top-4.right-4 { display: none !important; }" }
+  if (-not $o.Clock)     { $newtab += "  .absolute.top-4.right-4 { display: none !important; }"; $newtab += "  :root:has(#fm-clock) .outer-wrapper { padding-top: revert !important; }" }
   if (-not $o.Wallpaper) { $newtab += "  #root::before { animation: none !important; }" }
 
   $head = "/* ---------------- Настройки из установщика ---------------- */"

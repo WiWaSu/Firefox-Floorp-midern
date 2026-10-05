@@ -146,6 +146,16 @@ export class FloorpPdfTweaksChild extends JSWindowActorChild {
     if (!doc || event.target !== doc) {
       return;
     }
+    // новая вкладка Firefox (и других форков без своей страницы): часы как в Floorp
+    try {
+      const href = String(this.contentWindow?.location?.href || "");
+      if (/^about:(newtab|home)\b/.test(href) && doc.getElementById("root")) {
+        this.#setupNewtabClock();
+        return;
+      }
+    } catch (e) {
+      console.error("[pdf-tweaks] newtab clock:", e);
+    }
     let isViewer = false;
     try {
       isViewer = doc.nodePrincipal.originNoSuffix === "resource://pdf.js";
@@ -215,6 +225,83 @@ export class FloorpPdfTweaksChild extends JSWindowActorChild {
   }
 
   /* ------------------------------ theme ------------------------------ */
+
+  /* Часы на новой вкладке Firefox / LibreWolf / Waterfox и т. д.
+     Разметка повторяет часы Floorp (те же классы), поэтому оформление
+     каждой темы (часы Galaxy, стеклянные iOS, столбиком Pixel…) применяется само. */
+  #setupNewtabClock() {
+    const doc = this.document;
+    const win = this.contentWindow;
+    // страница рисуется React-ом уже после загрузки — ждём, пока станет ясно,
+    // что это новая вкладка Firefox (.outer-wrapper), а не Floorp (у него свои часы)
+    let tries = 0;
+    const wait = () => {
+      if (doc.getElementById("fm-clock") || doc.querySelector(".absolute.top-4.right-4")) {
+        return;
+      }
+      if (!doc.querySelector(".outer-wrapper")) {
+        if (++tries < 25) {
+          win.setTimeout(wait, 200);
+        }
+        return;
+      }
+      this.#buildNewtabClock();
+    };
+    wait();
+  }
+
+  #buildNewtabClock() {
+    const doc = this.document;
+    const win = this.contentWindow;
+    const el = (tag, cls, text) => {
+      const e = doc.createElement(tag);
+      if (cls) {
+        e.className = cls;
+      }
+      if (text) {
+        e.textContent = text;
+      }
+      return e;
+    };
+    const outer = el("div", "absolute top-4 right-4");
+    outer.id = "fm-clock";
+    const card = el("div", "fm-clock-card");
+    const row = el("div", "flex items-center gap-3");
+    const time = el("div", "tabular-nums");
+    const hh = doc.createTextNode("");
+    const colon = el("span", "animate-pulse", ":");
+    const mm = doc.createTextNode("");
+    time.append(hh, colon, mm);
+    const dates = el("div", "flex flex-col text-right");
+    const day = el("div", "");
+    const date = el("div", "");
+    dates.append(day, date);
+    row.append(time, dates);
+    card.append(row);
+    outer.append(card);
+    (doc.body || doc.documentElement).append(outer);
+
+    const fmt = opts => {
+      try {
+        return new win.Intl.DateTimeFormat(win.navigator.language || undefined, opts);
+      } catch {
+        return new win.Intl.DateTimeFormat(undefined, opts);
+      }
+    };
+    const fmtDay = fmt({ weekday: "short" });
+    const fmtDate = fmt({ day: "2-digit", month: "2-digit" });
+    const tick = () => {
+      const d = new win.Date();
+      hh.data = String(d.getHours()).padStart(2, "0");
+      mm.data = String(d.getMinutes()).padStart(2, "0");
+      const wd = fmtDay.format(d);
+      day.textContent = wd.charAt(0).toUpperCase() + wd.slice(1);
+      date.textContent = fmtDate.format(d);
+    };
+    tick();
+    const timer = win.setInterval(tick, 1000);
+    win.addEventListener("pagehide", () => win.clearInterval(timer), { once: true });
+  }
 
   #setupTheme() {
     const doc = this.document;

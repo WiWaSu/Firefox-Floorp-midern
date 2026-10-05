@@ -1011,6 +1011,13 @@ CONTENT = r"""
     50%  { transform: translate3d(4%, -3%, 0) rotate(8deg) scale(1.08); }
     100% { transform: translate3d(-4%, 3%, 0) rotate(-6deg) scale(1.04); }
   }
+  /* новая вкладка Firefox / LibreWolf / Waterfox (Activity Stream): часы в той же
+     разметке, что у Floorp, добавляет скрипт просмотрщика; убираем логотип */
+  #fm-clock .flex { display: flex !important; align-items: center !important; }
+  #fm-clock .flex-col { display: flex !important; }
+  #fm-clock { font-family: "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif !important; color: #fff !important; pointer-events: none !important; }
+  :root:has(#fm-clock) :is(.logo-and-wordmark-wrapper, .logo-and-wordmark) { display: none !important; }
+  :root:has(#fm-clock) .outer-wrapper { padding-top: 36vh !important; }
   /* встроенные картинки Floorp прячем, свои картинки пользователя остаются */
   .bg-cover[style*="noraneko-newtab"] { display: none !important; }
 
