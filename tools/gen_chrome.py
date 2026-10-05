@@ -793,6 +793,53 @@ menupopup > :is(menuitem, menu):is([_moz-menuactive]):not([disabled]) {
   /* новый список вкладок/истории (html) */
   :is(.sidebar-row, sidebar-tab-row, .history-item, fxview-tab-row) { border-radius: 14px !important; }
 }
+
+/* ======== ПЛАШКА «ВЫ ПРЕДОСТАВЛЯЕТЕ ДОСТУП К ЭКРАНУ» ========
+   Это отдельное маленькое окно браузера (chrome-документ), поэтому стили — здесь,
+   в userChrome.css. Делаем капсулу с «живой» красной точкой, как индикатор записи. */
+@-moz-document url("chrome://browser/content/webrtcIndicator.xhtml") {
+  :root { background: transparent !important; }
+  body {
+    border-radius: 999px !important;
+    border: 1px solid var(--fm-line) !important;
+    background: var(--fm-menu, #1c1d20) !important;
+    color: var(--fm-ink) !important;
+    font: 500 12.5px var(--fm-font) !important;
+    padding-inline: 6px 4px !important;
+    white-space: nowrap !important;
+    box-shadow: none !important;
+  }
+  .row-item { margin-block: 4px !important; }
+  #drag-indicator { opacity: .5 !important; margin-inline: 4px 2px !important; }
+  #display-share { gap: 2px !important; }
+  /* «живая» точка вместо значка экрана */
+  #display-share-icon {
+    width: 8px !important; height: 8px !important; margin-inline: 6px 10px !important;
+    border-radius: 50% !important; background: #ff453a !important; background-image: none !important;
+    box-shadow: 0 0 0 0 rgb(255 69 58 / .6);
+    animation: fm-live 1.6s ease-out infinite;
+  }
+  @keyframes fm-live {
+    0% { box-shadow: 0 0 0 0 rgb(255 69 58 / .55); }
+    70% { box-shadow: 0 0 0 7px rgb(255 69 58 / 0); }
+    100% { box-shadow: 0 0 0 0 rgb(255 69 58 / 0); }
+  }
+  .stop-button {
+    border-radius: 999px !important;
+    padding: 3px 12px !important;
+    margin-inline-start: 12px !important;
+    font-weight: 600 !important;
+    background: var(--fm-accent) !important;
+    color: var(--fm-on-accent) !important;
+  }
+  .stop-button:hover { background: color-mix(in srgb, var(--fm-accent) 85%, black) !important; }
+  .control-icon, #minimize { border-radius: 999px !important; }
+  #minimize { padding: 9px !important; background-color: var(--fm-hover) !important; }
+  #minimize:hover { background-color: var(--fm-press) !important; }
+  .separator { border-inline-end-color: var(--fm-line) !important; }
+}
+
+
 /* ======================= FLOORP-MODERN END ======================= */
 """
 
@@ -1150,30 +1197,6 @@ CONTENT = r"""
 }
 #screenshots-component #screenshots-cancel-button:hover { background: #fff !important; color: #000 !important; }
 #screenshots-component .preview-instructions { font: 600 22px "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif !important; }
-
-/* ---------- плашка «Вы предоставляете доступ к экрану» ---------- */
-@-moz-document url("chrome://browser/content/webrtcIndicator.xhtml") {
-  body {
-    border-radius: 16px !important;
-    border: 1px solid light-dark(rgb(0 0 0 / .1), rgb(255 255 255 / .1)) !important;
-    background: light-dark(#ffffff, #17181a) !important;
-    color: light-dark(#111214, #f2f2f3) !important;
-    font: 500 12.5px "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif !important;
-    padding-inline: 4px 2px !important;
-  }
-  .stop-button {
-    border-radius: 999px !important;
-    padding: 3px 12px !important;
-    font-weight: 600 !important;
-    background: AccentColor !important;
-    color: AccentColorText !important;
-  }
-  .stop-button:hover { background: color-mix(in srgb, AccentColor 85%, black) !important; }
-  .control-icon, #minimize { border-radius: 999px !important; }
-  #minimize { padding: 9px !important; }
-  .separator { opacity: .25 !important; }
-  #drag-indicator { opacity: .7; }
-}
 
 /* ---------- настройки Floorp (chrome://noraneko-settings) в стиле One UI ---------- */
 @-moz-document url-prefix("chrome://noraneko-settings/") {

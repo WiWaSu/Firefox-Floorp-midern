@@ -4,7 +4,7 @@
 
 Supported browsers: Floorp, Firefox, Firefox Developer Edition, Firefox Nightly, LibreWolf, Waterfox, Zen Browser, Mercury.
 
-[Русская версия ниже](#русский) · Version **1.8.0** · [Changelog](CHANGELOG.md)
+[Русская версия ниже](#русский) · Version **1.8.1** · [Changelog](CHANGELOG.md)
 
 ![New tab page preview](docs/newtab-preview.png)
 

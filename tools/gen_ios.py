@@ -295,6 +295,21 @@ button.primary, .popup-notification-primary-button {
 }
 .fm-progress-fill { background: linear-gradient(90deg, #0A84FF, #5E5CE6, #FF375F) !important; box-shadow: 0 0 10px rgb(10 132 255 / .7) !important; }
 findbar { background: transparent !important; }
+/* ---------- плашка доступа к экрану: стеклянная капсула ---------- */
+@-moz-document url("chrome://browser/content/webrtcIndicator.xhtml") {
+  body {
+    background: light-dark(rgb(250 250 253 / .96), rgb(34 34 40 / .96)) !important;
+    background-image: linear-gradient(180deg, light-dark(rgb(255 255 255 / .8), rgb(255 255 255 / .12)), transparent 60%) !important;
+    border: 0 !important;
+    box-shadow: inset 0 1px 0 light-dark(#fff, rgb(255 255 255 / .3)), inset 0 0 0 1px light-dark(rgb(0 0 0 / .08), rgb(255 255 255 / .08)) !important;
+  }
+  .stop-button {
+    background: linear-gradient(180deg, #3D9BFF, #0A84FF 65%) !important;
+    color: #fff !important;
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / .4) !important;
+  }
+}
+
 """
 
 # ================================================================ страницы about:, настройки, новая вкладка
@@ -510,21 +525,6 @@ CONTENT = r"""
 }
 #screenshots-component .highlight { border-radius: 14px !important; }
 #screenshots-component .mover { box-shadow: 0 0 0 2px #0A84FF, 0 2px 8px rgb(0 0 0 / .45) !important; }
-
-/* ---------- плашка доступа к экрану: стеклянная капсула ---------- */
-@-moz-document url("chrome://browser/content/webrtcIndicator.xhtml") {
-  body {
-    background: light-dark(rgb(250 250 253 / .96), rgb(34 34 40 / .96)) !important;
-    background-image: linear-gradient(180deg, light-dark(rgb(255 255 255 / .8), rgb(255 255 255 / .12)), transparent 60%) !important;
-    border: 0 !important;
-    box-shadow: inset 0 1px 0 light-dark(#fff, rgb(255 255 255 / .3)), inset 0 0 0 1px light-dark(rgb(0 0 0 / .08), rgb(255 255 255 / .08)) !important;
-  }
-  .stop-button {
-    background: linear-gradient(180deg, #3D9BFF, #0A84FF 65%) !important;
-    color: #fff !important;
-    box-shadow: inset 0 1px 0 rgb(255 255 255 / .4) !important;
-  }
-}
 
 """
 

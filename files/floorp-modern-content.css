@@ -378,30 +378,6 @@
 #screenshots-component #screenshots-cancel-button:hover { background: #fff !important; color: #000 !important; }
 #screenshots-component .preview-instructions { font: 600 22px "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif !important; }
 
-/* ---------- плашка «Вы предоставляете доступ к экрану» ---------- */
-@-moz-document url("chrome://browser/content/webrtcIndicator.xhtml") {
-  body {
-    border-radius: 16px !important;
-    border: 1px solid light-dark(rgb(0 0 0 / .1), rgb(255 255 255 / .1)) !important;
-    background: light-dark(#ffffff, #17181a) !important;
-    color: light-dark(#111214, #f2f2f3) !important;
-    font: 500 12.5px "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif !important;
-    padding-inline: 4px 2px !important;
-  }
-  .stop-button {
-    border-radius: 999px !important;
-    padding: 3px 12px !important;
-    font-weight: 600 !important;
-    background: var(--fm-user-accent, AccentColor) !important;
-    color: var(--fm-user-on-accent, AccentColorText) !important;
-  }
-  .stop-button:hover { background: color-mix(in srgb, var(--fm-user-accent, AccentColor) 85%, black) !important; }
-  .control-icon, #minimize { border-radius: 999px !important; }
-  #minimize { padding: 9px !important; }
-  .separator { opacity: .25 !important; }
-  #drag-indicator { opacity: .7; }
-}
-
 /* ---------- настройки Floorp (chrome://noraneko-settings) в стиле One UI ---------- */
 @-moz-document url-prefix("chrome://noraneko-settings/") {
   :root, :root[data-theme], .floorp-standard-ui {

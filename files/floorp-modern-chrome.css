@@ -772,4 +772,51 @@ menupopup > :is(menuitem, menu):is([_moz-menuactive]):not([disabled]) {
   /* новый список вкладок/истории (html) */
   :is(.sidebar-row, sidebar-tab-row, .history-item, fxview-tab-row) { border-radius: 14px !important; }
 }
+
+/* ======== ПЛАШКА «ВЫ ПРЕДОСТАВЛЯЕТЕ ДОСТУП К ЭКРАНУ» ========
+   Это отдельное маленькое окно браузера (chrome-документ), поэтому стили — здесь,
+   в userChrome.css. Делаем капсулу с «живой» красной точкой, как индикатор записи. */
+@-moz-document url("chrome://browser/content/webrtcIndicator.xhtml") {
+  :root { background: transparent !important; }
+  body {
+    border-radius: 999px !important;
+    border: 1px solid var(--fm-line) !important;
+    background: var(--fm-menu, #1c1d20) !important;
+    color: var(--fm-ink) !important;
+    font: 500 12.5px var(--fm-font) !important;
+    padding-inline: 6px 4px !important;
+    white-space: nowrap !important;
+    box-shadow: none !important;
+  }
+  .row-item { margin-block: 4px !important; }
+  #drag-indicator { opacity: .5 !important; margin-inline: 4px 2px !important; }
+  #display-share { gap: 2px !important; }
+  /* «живая» точка вместо значка экрана */
+  #display-share-icon {
+    width: 8px !important; height: 8px !important; margin-inline: 6px 10px !important;
+    border-radius: 50% !important; background: #ff453a !important; background-image: none !important;
+    box-shadow: 0 0 0 0 rgb(255 69 58 / .6);
+    animation: fm-live 1.6s ease-out infinite;
+  }
+  @keyframes fm-live {
+    0% { box-shadow: 0 0 0 0 rgb(255 69 58 / .55); }
+    70% { box-shadow: 0 0 0 7px rgb(255 69 58 / 0); }
+    100% { box-shadow: 0 0 0 0 rgb(255 69 58 / 0); }
+  }
+  .stop-button {
+    border-radius: 999px !important;
+    padding: 3px 12px !important;
+    margin-inline-start: 12px !important;
+    font-weight: 600 !important;
+    background: var(--fm-accent) !important;
+    color: var(--fm-on-accent) !important;
+  }
+  .stop-button:hover { background: color-mix(in srgb, var(--fm-accent) 85%, black) !important; }
+  .control-icon, #minimize { border-radius: 999px !important; }
+  #minimize { padding: 9px !important; background-color: var(--fm-hover) !important; }
+  #minimize:hover { background-color: var(--fm-press) !important; }
+  .separator { border-inline-end-color: var(--fm-line) !important; }
+}
+
+
 /* ======================= FLOORP-MODERN END ======================= */
