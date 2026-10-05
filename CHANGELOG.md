@@ -5,6 +5,9 @@
 The installer version is shown in the setup window, the console and
 `chrome\floorp-modern-version.txt` in the profile.
 
+## 1.9.1 — 2026-10-05
+- Firefox: кнопки «назад», «вперёд», «обновить» и другие значки панели были чёрными и сливались с фоном. Firefox (в отличие от Floorp) по умолчанию не даёт встроенным SVG-значкам брать цвет темы — установщик теперь включает это (`svg.context-properties.content.enabled`) во всех браузерах.
+
 ## 1.9.0 — 2026-10-05
 - Новая вкладка Firefox, LibreWolf, Waterfox и других форков без своей стартовой страницы теперь как у Floorp: большие часы с датой в стиле выбранной темы, без логотипа Firefox, поиск и ярлыки ниже часов. Часы выключаются в установщике вместе с часами Floorp.
 

@@ -31,7 +31,7 @@ $ErrorActionPreference = "Stop"
 try { [Console]::OutputEncoding = [Text.Encoding]::UTF8 } catch {}
 
 # версия установщика (меняется вместе с файлом VERSION и CHANGELOG.md)
-$Version = "1.9.0"
+$Version = "1.9.1"
 $Here = $PSScriptRoot
 $Utf8 = New-Object System.Text.UTF8Encoding($false)
 $Ru = $true
@@ -144,6 +144,8 @@ $PrefLine
 // Floorp Modern: Firefox Nova design, tabs expand on hover
 user_pref("browser.nova.enabled", true);
 user_pref("sidebar.visibility", "expand-on-hover");
+// Floorp Modern: lets toolbar icons take the theme colour (without it Firefox draws them black)
+user_pref("svg.context-properties.content.enabled", true);
 "@
 
 function Remove-OurBlocks($text) {
@@ -152,7 +154,7 @@ function Remove-OurBlocks($text) {
 }
 function Remove-OurPrefs($text) {
   $lines = $text -split "`r?`n" | Where-Object {
-    $_ -notmatch 'toolkit\.legacyUserProfileCustomizations\.stylesheets|browser\.nova\.enabled|widget\.windows\.mica|sidebar\.visibility|floorp\.pdftweaks\.enabled|^// (Floorp PDF|Floorp Modern|Включает userChrome)'
+    $_ -notmatch 'toolkit\.legacyUserProfileCustomizations\.stylesheets|browser\.nova\.enabled|widget\.windows\.mica|sidebar\.visibility|svg\.context-properties\.content\.enabled|floorp\.pdftweaks\.enabled|^// (Floorp PDF|Floorp Modern|Включает userChrome)'
   }
   return ($lines -join "`n")
 }
