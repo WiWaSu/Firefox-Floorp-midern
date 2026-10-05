@@ -505,6 +505,24 @@ export class FloorpPdfTweaksChild extends JSWindowActorChild {
       sync();
       render();
     };
+    // элементы меню — div с ролью кнопки: правила PDF.js для <button> их не ломают
+    const act = (cls, text, fn) => {
+      const el = doc.createElement("div");
+      el.className = cls;
+      el.setAttribute("role", "button");
+      el.tabIndex = 0;
+      if (text) {
+        el.textContent = text;
+      }
+      el.addEventListener("click", fn, { signal });
+      el.addEventListener("keydown", e => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          fn(e);
+        }
+      }, { signal });
+      return el;
+    };
     const render = () => {
       if (menu.hidden) {
         return;
@@ -516,16 +534,10 @@ export class FloorpPdfTweaksChild extends JSWindowActorChild {
       const title = doc.createElement("span");
       title.className = "x-title";
       title.textContent = "Закладки";
-      const add = doc.createElement("button");
-      add.type = "button";
-      add.className = "x-add";
+      const add = act("x-add", has(now) ? `Убрать стр. ${now}` : `+ Стр. ${now || 1}`, () => toggle(now || 1));
       if (has(now)) {
         add.setAttribute("data-on", "");
-        add.textContent = `Убрать стр. ${now}`;
-      } else {
-        add.textContent = `+ Стр. ${now || 1}`;
       }
-      add.addEventListener("click", () => toggle(now || 1), { signal });
       head.append(title, add);
       menu.append(head);
       if (!list.length) {
@@ -541,9 +553,10 @@ export class FloorpPdfTweaksChild extends JSWindowActorChild {
         if (b.p === now) {
           row.setAttribute("data-current", "");
         }
-        const go = doc.createElement("button");
-        go.type = "button";
-        go.className = "x-go";
+        const go = act("x-go", "", () => {
+          goTo(b.p);
+          setOpen(false);
+        });
         const num = doc.createElement("span");
         num.className = "x-num";
         num.textContent = String(b.p);
@@ -552,19 +565,11 @@ export class FloorpPdfTweaksChild extends JSWindowActorChild {
         note.textContent = b.note || `Страница ${b.p}`;
         go.append(num, note);
         go.title = `Перейти на стр. ${b.p}`;
-        go.addEventListener("click", () => {
-          goTo(b.p);
-          setOpen(false);
-        }, { signal });
-        const del = doc.createElement("button");
-        del.type = "button";
-        del.className = "x-del";
-        del.textContent = "×";
-        del.title = "Убрать закладку";
-        del.addEventListener("click", e => {
+        const del = act("x-del", "×", e => {
           e.stopPropagation();
           toggle(b.p);
-        }, { signal });
+        });
+        del.title = "Убрать закладку";
         row.append(go, del);
         menu.append(row);
       }

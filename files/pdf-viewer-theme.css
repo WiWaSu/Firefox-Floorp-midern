@@ -407,38 +407,57 @@
   & #xBookButton[data-on]::before { mask-image: var(--x-bookmark-on-icon) !important; background-color: var(--x-accent) !important; }
   & #xBookWrap { position: relative; display: flex; align-items: center; }
   & #xBookMenu {
-    position: absolute; top: calc(100% + 10px); inset-inline-end: -4px; z-index: 30000;
-    width: 290px; max-height: min(70vh, 520px); overflow: auto; padding: 8px;
-    display: grid; gap: 2px; color: var(--x-ink); font-size: 13px;
+    position: absolute !important; top: calc(100% + 10px) !important; inset-inline-end: -4px !important; z-index: 30000 !important;
+    width: 300px !important; max-width: calc(100vw - 16px) !important; box-sizing: border-box !important;
+    max-height: min(70vh, 520px) !important; overflow: hidden auto !important; padding: 8px !important;
+    display: flex !important; flex-direction: column !important; gap: 2px !important;
+    color: var(--x-ink) !important; font: 500 13px "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif !important;
+    white-space: normal !important;
   }
-  & #xBookMenu .x-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 4px 4px 8px 10px; }
-  & #xBookMenu .x-title { font-weight: 700; font-size: 15px; }
-  & #xBookMenu button {
-    appearance: none !important; font: inherit; color: var(--x-ink); background: none; border: 0; cursor: pointer;
+  & #xBookMenu[hidden] { display: none !important; }
+  & #xBookMenu [role="button"] { cursor: pointer !important; user-select: none !important; outline: none !important; }
+  & #xBookMenu [role="button"]:focus-visible { box-shadow: 0 0 0 2px var(--x-accent) !important; }
+  & #xBookMenu .x-head {
+    display: flex !important; align-items: center !important; justify-content: space-between !important;
+    gap: 8px !important; padding: 4px 4px 8px 10px !important; min-width: 0 !important;
   }
+  & #xBookMenu .x-title { font-weight: 700 !important; font-size: 15px !important; flex: 1 1 auto !important; }
   & #xBookMenu .x-add {
-    padding: 6px 12px; border-radius: 999px; background: var(--x-accent) !important; color: var(--x-on-accent) !important;
-    font-weight: 600; white-space: nowrap;
+    flex: none !important; padding: 6px 12px !important; border-radius: 999px !important;
+    background: var(--x-accent) !important; color: var(--x-on-accent) !important;
+    font-weight: 600 !important; white-space: nowrap !important;
   }
+  & #xBookMenu .x-add:hover { filter: brightness(1.08); }
   & #xBookMenu .x-add[data-on] { background: var(--x-hover) !important; color: var(--x-ink) !important; }
   & #xBookMenu .x-item {
-    display: flex; align-items: center; gap: 10px; border-radius: 12px; padding: 4px 4px 4px 8px;
+    display: flex !important; align-items: center !important; gap: 6px !important; min-width: 0 !important;
+    border-radius: 12px !important; padding: 4px 4px 4px 8px !important;
   }
-  & #xBookMenu .x-item:hover { background: var(--x-hover); }
-  & #xBookMenu .x-item[data-current] { background: var(--x-soft); }
-  & #xBookMenu .x-go { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; text-align: start; padding: 4px 0; }
+  & #xBookMenu .x-item:hover { background: var(--x-hover) !important; }
+  & #xBookMenu .x-item[data-current] { background: var(--x-soft) !important; }
+  & #xBookMenu .x-go {
+    flex: 1 1 auto !important; min-width: 0 !important; overflow: hidden !important;
+    display: flex !important; align-items: center !important; gap: 10px !important; padding: 4px 0 !important;
+  }
   & #xBookMenu .x-num {
-    flex: none; min-width: 34px; height: 26px; padding: 0 6px; box-sizing: border-box;
-    display: grid; place-items: center; border-radius: 8px;
-    background: var(--x-accent); color: var(--x-on-accent); font-weight: 700; font-size: 12px;
+    flex: none !important; min-width: 34px !important; height: 26px !important; padding: 0 6px !important; box-sizing: border-box !important;
+    display: grid !important; place-items: center !important; border-radius: 8px !important;
+    background: var(--x-accent) !important; color: var(--x-on-accent) !important; font-weight: 700 !important; font-size: 12px !important;
   }
-  & #xBookMenu .x-note { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--x-muted); }
-  & #xBookMenu .x-del { flex: none; width: 28px; height: 28px; border-radius: 50%; color: var(--x-muted); font-size: 16px; line-height: 1; }
-  & #xBookMenu .x-del:hover { background: var(--x-press); color: var(--x-ink); }
-  & #xBookMenu .x-empty { padding: 10px 10px 12px; color: var(--x-muted); line-height: 1.45; }
+  & #xBookMenu .x-note {
+    flex: 1 1 auto !important; min-width: 0 !important;
+    overflow: hidden !important; text-overflow: ellipsis !important; white-space: nowrap !important; color: var(--x-muted) !important;
+  }
+  & #xBookMenu .x-del {
+    flex: none !important; width: 28px !important; height: 28px !important; border-radius: 50% !important;
+    display: grid !important; place-items: center !important; color: var(--x-muted) !important; font-size: 17px !important; line-height: 1 !important;
+  }
+  & #xBookMenu .x-del:hover { background: var(--x-press) !important; color: var(--x-ink) !important; }
+  & #xBookMenu .x-empty { padding: 10px 10px 12px !important; color: var(--x-muted) !important; line-height: 1.45 !important; }
   /* ленточка на странице с закладкой */
-  & .pdfViewer .page.x-bookmarked::after {
-    content: ""; position: absolute; top: -3px; inset-inline-end: 28px; z-index: 6;
+  /* ::after у страницы занят значком загрузки PDF.js, поэтому ленточка — на ::before */
+  & .pdfViewer .page.x-bookmarked::before {
+    content: "" !important; display: block !important; position: absolute !important; top: -3px; inset-inline-end: 28px; z-index: 6 !important;
     width: 18px; height: 30px; background: var(--x-accent);
     clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 74%, 0 100%);
     filter: drop-shadow(0 2px 3px rgb(0 0 0 / .3)); pointer-events: none;
