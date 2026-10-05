@@ -152,10 +152,10 @@
   }
 
   @media (prefers-color-scheme: dark) {
-    &:not([data-x-page]) { --x-page-filter: invert(.88) hue-rotate(180deg) contrast(.9); }
+    &:not([data-x-page]) { --x-page-filter: invert(.88) hue-rotate(180deg) contrast(.9); --x-page-bg: #25262a; }
   }
-  &[data-x-page="sepia"] { --x-page-filter: sepia(.45) brightness(.96) contrast(.95); }
-  &[data-x-page="night"] { --x-page-filter: invert(.88) hue-rotate(180deg) contrast(.9); }
+  &[data-x-page="sepia"] { --x-page-filter: sepia(.45) brightness(.96) contrast(.95); --x-page-bg: #f4eddc; }
+  &[data-x-page="night"] { --x-page-filter: invert(.88) hue-rotate(180deg) contrast(.9); --x-page-bg: #25262a; }
 
   &, & body, & button, & input, & select, & menu {
     font-family: "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif !important;
@@ -353,7 +353,11 @@
     border-radius: var(--x-radius) !important;
     box-shadow: var(--x-shadow) !important;
     overflow: hidden !important;
+    /* фон страницы того же цвета, что и сама страница после фильтра:
+       пока страница рисуется, нет белых уголков и белых вспышек */
+    background-color: var(--x-page-bg, #ffffff) !important;
   }
+  & .pdfViewer .page .canvasWrapper { border-radius: inherit !important; overflow: hidden !important; }
   & .pdfViewer .page .canvasWrapper { filter: var(--x-page-filter) !important; }
   & .pdfViewer:is(.scrollHorizontal, .scrollWrapped) .page,
   & .pdfViewer .spread .page { margin: 0 calc(var(--x-gap) / 2) var(--x-gap) !important; }

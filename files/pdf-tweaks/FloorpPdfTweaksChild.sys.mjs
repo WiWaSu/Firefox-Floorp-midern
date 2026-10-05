@@ -183,6 +183,11 @@ export class FloorpPdfTweaksChild extends JSWindowActorChild {
       console.error("[pdf-tweaks] bookmarks:", e);
     }
     try {
+      this.#setupRenderKick();
+    } catch (e) {
+      console.error("[pdf-tweaks] render kick:", e);
+    }
+    try {
       this.#setupQuickText();
     } catch (e) {
       console.error("[pdf-tweaks] quick text:", e);
@@ -608,6 +613,52 @@ export class FloorpPdfTweaksChild extends JSWindowActorChild {
     const timer = win.setInterval(sync, 1500);
     signal.addEventListener("abort", () => win.clearInterval(timer));
     sync();
+  }
+
+  /* Иногда (после быстрого перехода по страницам) PDF.js не начинает рисовать
+     видимую страницу, и она остаётся пустой, пока не прокрутишь. Следим за этим:
+     если видимая страница не нарисована дольше 2 с — слегка «шевелим» прокрутку,
+     и PDF.js дорисовывает её сам. */
+  #setupRenderKick() {
+    const doc = this.document;
+    const win = this.contentWindow;
+    const signal = this.#ac.signal;
+    const waiting = new Map(); // номер страницы → когда заметили пустой
+    const timer = win.setInterval(() => {
+      const box = doc.getElementById("viewerContainer");
+      if (!box || doc.hidden) {
+        return;
+      }
+      const vr = box.getBoundingClientRect();
+      const now = Date.now();
+      let stuck = false;
+      for (const page of doc.querySelectorAll(".pdfViewer .page[data-page-number]")) {
+        const r = page.getBoundingClientRect();
+        if (r.bottom < vr.top || r.top > vr.bottom) {
+          continue; // не на экране
+        }
+        const n = page.getAttribute("data-page-number");
+        if (page.hasAttribute("data-loaded")) {
+          waiting.delete(n);
+          continue;
+        }
+        if (!waiting.has(n)) {
+          waiting.set(n, now);
+        } else if (now - waiting.get(n) > 2000) {
+          stuck = true;
+          waiting.set(n, now);
+        }
+      }
+      if (stuck) {
+        const y = box.scrollTop;
+        box.scrollTop = y + 1;
+        win.requestAnimationFrame(() => {
+          box.scrollTop = y;
+          box.dispatchEvent(new win.Event("scroll"));
+        });
+      }
+    }, 1000);
+    signal.addEventListener("abort", () => win.clearInterval(timer));
   }
 
   /* Короткое уведомление внизу просмотрщика с кнопкой действия. */
