@@ -1,15 +1,21 @@
 # Floorp Modern
 
-**A redesign for [Floorp](https://floorp.app) and Firefox on Windows in two styles — Samsung One UI or iOS 26 Liquid Glass — with a reworked built-in PDF viewer.**
+**A redesign for [Floorp](https://floorp.app), Firefox and Firefox forks on Windows — six themes, a setup window to customize them, and a reworked built-in PDF viewer.**
 
-[Русская версия ниже](#русский) · Version **1.6.0** · [Changelog](CHANGELOG.md)
+Supported browsers: Floorp, Firefox, Firefox Developer Edition, Firefox Nightly, LibreWolf, Waterfox, Zen Browser, Mercury.
+
+[Русская версия ниже](#русский) · Version **1.7.0** · [Changelog](CHANGELOG.md)
 
 ![New tab page preview](docs/newtab-preview.png)
 
 ## Features
 
-**Two themes** — pick one in the installer:
+**Six themes** — pick one in the installer:
 - **One UI** — Samsung Galaxy look, accent color from Windows.
+- **Material You** — Android / Pixel: tonal colors from the accent, stacked lock-screen clock.
+- **Windows 11** — Fluent: crisp corners, accent underline, Bloom wallpaper.
+- **macOS** — traffic-light window buttons, blue menus, wave wallpaper.
+- **Nothing** — monochrome, red dot, dot-matrix clock.
 - **iOS · Liquid Glass** — iOS 26 look: a wallpaper behind the window, a floating glass toolbar capsule, glass tabs, menus and toasts with highlights, square app icons, green switches, a glass lock-screen clock, and a PDF toolbar that floats over the pages.
 
 **Interface**
@@ -111,10 +117,16 @@ This is an unofficial community mod. It is not affiliated with or endorsed by Mo
 
 ## Русский
 
-**Редизайн Floorp и Firefox для Windows в двух стилях: Samsung One UI или iOS. Плюс переделанный встроенный просмотрщик PDF.**
+**Редизайн Floorp, Firefox и форков Firefox для Windows: шесть тем, настройка перед установкой и переделанный встроенный просмотрщик PDF.**
 
-**Две темы** на выбор в установщике:
+Поддерживаются: Floorp, Firefox, Firefox Developer Edition, Firefox Nightly, LibreWolf, Waterfox, Zen Browser, Mercury.
+
+**Шесть тем** на выбор в установщике:
 - **One UI**: как Samsung Galaxy, акцент из Windows.
+- **Material You**: как Android / Pixel, тональные цвета, часы столбиком.
+- **Windows 11**: Fluent, строгие углы, обои Bloom.
+- **macOS**: «светофор» вместо кнопок окна, синие меню, обои-волны.
+- **Nothing**: монохром, красная точка, часы из точек.
 - **iOS · Liquid Glass**: как iOS 26. Обои под окном, парящая стеклянная панель, стеклянные вкладки, меню и уведомления с бликами, иконки-квадраты, зелёные переключатели, стеклянные часы, панель PDF поверх страниц.
 
 ### Что меняется

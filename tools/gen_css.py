@@ -539,4 +539,7 @@ CSS = r"""
 
 if __name__ == "__main__":
     import sys
-    sys.stdout.write(CSS)
+    import re as _re
+    _css = CSS.replace("AccentColorText", "var(--fm-user-on-accent, AccentColorText)")
+    _css = _re.sub(r"\bAccentColor\b(?!Text)", "var(--fm-user-accent, AccentColor)", _css)
+    sys.stdout.write(_css)

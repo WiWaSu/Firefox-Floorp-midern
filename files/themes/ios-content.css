@@ -3,7 +3,7 @@
 @-moz-document url-prefix("about:"), url-prefix("chrome://browser/content/"), url-prefix("chrome://mozapps/"), url-prefix("chrome://global/content/") {
   :root {
 
-  --fm-accent: light-dark(#007AFF, #0A84FF) !important;
+  --fm-accent: light-dark(var(--fm-user-accent, #007AFF), var(--fm-user-accent, #0A84FF)) !important;
   --fm-on-accent: #ffffff !important;
   --fm-frame: light-dark(#EEF1F8, #05060B) !important;
   --fm-bar: light-dark(#FFFFFF, #1C1C1E) !important;
@@ -95,7 +95,7 @@
 @-moz-document url-prefix("chrome://noraneko-settings/") {
   :root {
 
-  --fm-accent: light-dark(#007AFF, #0A84FF) !important;
+  --fm-accent: light-dark(var(--fm-user-accent, #007AFF), var(--fm-user-accent, #0A84FF)) !important;
   --fm-on-accent: #ffffff !important;
   --fm-frame: light-dark(#EEF1F8, #05060B) !important;
   --fm-bar: light-dark(#FFFFFF, #1C1C1E) !important;

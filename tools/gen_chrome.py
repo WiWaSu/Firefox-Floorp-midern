@@ -1303,6 +1303,15 @@ CONTENT = r"""
 chrome_css = CHROME.replace("@TOKENS@", TOKENS).replace("@ICONS@", icon_rules)
 content_css = CONTENT.replace("@TOKENS@", TOKENS.replace("\n  ", "\n    "))
 
+# Цвет акцента можно переопределить в установщике: везде, где стоит системный
+# AccentColor, сначала берётся --fm-user-accent (если он задан).
+import re as _re
+def _user_accent(css):
+    css = css.replace("AccentColorText", "var(--fm-user-on-accent, AccentColorText)")
+    return _re.sub(r"\bAccentColor\b(?!Text)", "var(--fm-user-accent, AccentColor)", css)
+chrome_css = _user_accent(chrome_css)
+content_css = _user_accent(content_css)
+
 if __name__ == "__main__":
     import sys, pathlib
     out = pathlib.Path(sys.argv[1])

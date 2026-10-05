@@ -7,8 +7,8 @@
 
   /* ---------- НАСТРОЙКИ: меняйте тут ---------- */
   /* цвет акцента берётся из Windows (Параметры > Персонализация > Цвета) */
-  --fm-accent: light-dark(AccentColor, color-mix(in srgb, AccentColor 62%, white));
-  --fm-on-accent: light-dark(AccentColorText, color-mix(in srgb, AccentColor 22%, black));
+  --fm-accent: light-dark(var(--fm-user-accent, AccentColor), color-mix(in srgb, var(--fm-user-accent, AccentColor) 62%, white));
+  --fm-on-accent: light-dark(var(--fm-user-on-accent, AccentColorText), color-mix(in srgb, var(--fm-user-accent, AccentColor) 22%, black));
   --fm-radius: 22px;          /* скругление карточки со страницей */
   --fm-gap: 8px;              /* отступ вокруг карточки */
   /* -------------------------------------------- */
@@ -729,7 +729,7 @@ menupopup > :is(menuitem, menu):is([_moz-menuactive]):not([disabled]) {
     outline: none !important;
   }
   :is(search-textbox, moz-input-search, input[type="search"], #search-box):focus-within {
-    outline: 2px solid var(--fm-accent, AccentColor) !important;
+    outline: 2px solid var(--fm-accent, var(--fm-user-accent, AccentColor)) !important;
     outline-offset: -2px !important;
   }
   tree, #bookmarks-view, #historyTree {
@@ -751,7 +751,7 @@ menupopup > :is(menuitem, menu):is([_moz-menuactive]):not([disabled]) {
   treechildren::-moz-tree-row(selected),
   treechildren::-moz-tree-row(selected, focus),
   treechildren::-moz-tree-row(selected, current, focus) {
-    background-color: color-mix(in srgb, var(--fm-accent, AccentColor) 16%, transparent) !important;
+    background-color: color-mix(in srgb, var(--fm-accent, var(--fm-user-accent, AccentColor)) 16%, transparent) !important;
     border: 0 !important;
     outline: none !important;
   }

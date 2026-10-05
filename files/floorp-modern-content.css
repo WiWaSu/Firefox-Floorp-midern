@@ -6,8 +6,8 @@
 
     /* ---------- НАСТРОЙКИ: меняйте тут ---------- */
     /* цвет акцента берётся из Windows (Параметры > Персонализация > Цвета) */
-    --fm-accent: light-dark(AccentColor, color-mix(in srgb, AccentColor 62%, white));
-    --fm-on-accent: light-dark(AccentColorText, color-mix(in srgb, AccentColor 22%, black));
+    --fm-accent: light-dark(var(--fm-user-accent, AccentColor), color-mix(in srgb, var(--fm-user-accent, AccentColor) 62%, white));
+    --fm-on-accent: light-dark(var(--fm-user-on-accent, AccentColorText), color-mix(in srgb, var(--fm-user-accent, AccentColor) 22%, black));
     --fm-radius: 22px;          /* скругление карточки со страницей */
     --fm-gap: 8px;              /* отступ вокруг карточки */
     /* -------------------------------------------- */
@@ -151,8 +151,8 @@
 /* ---------- стартовая страница Floorp: экран блокировки Galaxy ---------- */
 @-moz-document url-prefix("chrome://noraneko-newtab/"), url("about:newtab"), url("about:home") {
   :root {
-    --fm-accent: AccentColor;
-    --fm-glow: color-mix(in srgb, AccentColor 75%, white);
+    --fm-accent: var(--fm-user-accent, AccentColor);
+    --fm-glow: color-mix(in srgb, var(--fm-user-accent, AccentColor) 75%, white);
   }
   html { background: #04050a !important; }
   html, body {
@@ -168,7 +168,7 @@
     z-index: -1;
     pointer-events: none;
     background:
-      radial-gradient(38% 46% at 22% 28%, color-mix(in srgb, AccentColor 92%, transparent), transparent 70%),
+      radial-gradient(38% 46% at 22% 28%, color-mix(in srgb, var(--fm-user-accent, AccentColor) 92%, transparent), transparent 70%),
       radial-gradient(34% 42% at 78% 22%, rgb(150 90 255 / .72), transparent 70%),
       radial-gradient(40% 50% at 62% 82%, rgb(0 200 255 / .5), transparent 70%),
       radial-gradient(30% 36% at 18% 86%, rgb(255 80 170 / .38), transparent 70%),
@@ -227,7 +227,7 @@
     line-height: .95 !important;
     letter-spacing: -0.03em !important;
     color: #fff !important;
-    text-shadow: 0 6px 40px rgb(0 0 0 / .35), 0 0 60px color-mix(in srgb, AccentColor 35%, transparent);
+    text-shadow: 0 6px 40px rgb(0 0 0 / .35), 0 0 60px color-mix(in srgb, var(--fm-user-accent, AccentColor) 35%, transparent);
   }
   .absolute.top-4.right-4 .tabular-nums > .animate-pulse {
     animation: fm-blink 2s ease-in-out infinite !important;
@@ -260,7 +260,7 @@
   .group.cursor-pointer:has(input[readonly]):hover {
     background: rgb(30 31 35 / .96) !important;
     transform: translateY(-2px) scale(1.012);
-    box-shadow: inset 0 1px 0 rgb(255 255 255 / .3), 0 26px 70px rgb(0 0 0 / .4), 0 0 0 4px color-mix(in srgb, AccentColor 25%, transparent) !important;
+    box-shadow: inset 0 1px 0 rgb(255 255 255 / .3), 0 26px 70px rgb(0 0 0 / .4), 0 0 0 4px color-mix(in srgb, var(--fm-user-accent, AccentColor) 25%, transparent) !important;
   }
   .group.cursor-pointer:has(input[readonly]) input {
     font-size: 17px !important;
@@ -312,7 +312,7 @@
 
 /* ---------- скриншот страницы (Ctrl+Shift+S): панель и рамка в стиле One UI ---------- */
 #screenshots-component {
-  --fm-shot-accent: AccentColor;
+  --fm-shot-accent: var(--fm-user-accent, AccentColor);
   font: 500 13px "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif !important;
 }
 #screenshots-component #buttons-container {
@@ -342,7 +342,7 @@
 #screenshots-component #cancel { width: 38px !important; min-width: 38px !important; padding: 0 !important; }
 #screenshots-component #download {
   background: var(--fm-shot-accent) !important;
-  color: AccentColorText !important;
+  color: var(--fm-user-on-accent, AccentColorText) !important;
   font-weight: 600 !important;
 }
 #screenshots-component #download:hover { background: color-mix(in srgb, var(--fm-shot-accent) 85%, white) !important; }
@@ -392,10 +392,10 @@
     border-radius: 999px !important;
     padding: 3px 12px !important;
     font-weight: 600 !important;
-    background: AccentColor !important;
-    color: AccentColorText !important;
+    background: var(--fm-user-accent, AccentColor) !important;
+    color: var(--fm-user-on-accent, AccentColorText) !important;
   }
-  .stop-button:hover { background: color-mix(in srgb, AccentColor 85%, black) !important; }
+  .stop-button:hover { background: color-mix(in srgb, var(--fm-user-accent, AccentColor) 85%, black) !important; }
   .control-icon, #minimize { border-radius: 999px !important; }
   #minimize { padding: 9px !important; }
   .separator { opacity: .25 !important; }
@@ -405,19 +405,19 @@
 /* ---------- настройки Floorp (chrome://noraneko-settings) в стиле One UI ---------- */
 @-moz-document url-prefix("chrome://noraneko-settings/") {
   :root, :root[data-theme], .floorp-standard-ui {
-    --floorp-brand: AccentColor !important;
-    --floorp-brand-hover: color-mix(in srgb, AccentColor 85%, black) !important;
-    --floorp-action: AccentColor !important;
-    --floorp-focus: AccentColor !important;
-    --floorp-switch-on: AccentColor !important;
+    --floorp-brand: var(--fm-user-accent, AccentColor) !important;
+    --floorp-brand-hover: color-mix(in srgb, var(--fm-user-accent, AccentColor) 85%, black) !important;
+    --floorp-action: var(--fm-user-accent, AccentColor) !important;
+    --floorp-focus: var(--fm-user-accent, AccentColor) !important;
+    --floorp-switch-on: var(--fm-user-accent, AccentColor) !important;
     --floorp-font: "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif !important;
-    --chakra-colors-purple-solid: AccentColor !important;
-    --chakra-colors-purple-fg: AccentColor !important;
-    --chakra-colors-purple-contrast: AccentColorText !important;
-    --chakra-colors-purple-focus-ring: AccentColor !important;
-    --chakra-colors-purple-subtle: color-mix(in srgb, AccentColor 14%, transparent) !important;
-    --chakra-colors-purple-muted: color-mix(in srgb, AccentColor 24%, transparent) !important;
-    --chakra-colors-purple-emphasized: color-mix(in srgb, AccentColor 34%, transparent) !important;
+    --chakra-colors-purple-solid: var(--fm-user-accent, AccentColor) !important;
+    --chakra-colors-purple-fg: var(--fm-user-accent, AccentColor) !important;
+    --chakra-colors-purple-contrast: var(--fm-user-on-accent, AccentColorText) !important;
+    --chakra-colors-purple-focus-ring: var(--fm-user-accent, AccentColor) !important;
+    --chakra-colors-purple-subtle: color-mix(in srgb, var(--fm-user-accent, AccentColor) 14%, transparent) !important;
+    --chakra-colors-purple-muted: color-mix(in srgb, var(--fm-user-accent, AccentColor) 24%, transparent) !important;
+    --chakra-colors-purple-emphasized: color-mix(in srgb, var(--fm-user-accent, AccentColor) 34%, transparent) !important;
     --chakra-radii-l1: 10px !important;
     --chakra-radii-l2: 14px !important;
     --chakra-radii-l3: 22px !important;
@@ -431,7 +431,7 @@
   }
   @media (prefers-color-scheme: dark) {
     :root, :root[data-theme], .floorp-standard-ui {
-      --floorp-action: color-mix(in srgb, AccentColor 62%, white) !important;
+      --floorp-action: color-mix(in srgb, var(--fm-user-accent, AccentColor) 62%, white) !important;
       --floorp-canvas: #000 !important;
       --floorp-subtle: #17181a !important;
       --floorp-surface: #17181a !important;
@@ -441,7 +441,7 @@
       --chakra-colors-bg-panel: #17181a !important;
       --chakra-colors-bg-subtle: #17181a !important;
       --chakra-colors-border: rgb(255 255 255 / .08) !important;
-      --chakra-colors-purple-fg: color-mix(in srgb, AccentColor 62%, white) !important;
+      --chakra-colors-purple-fg: color-mix(in srgb, var(--fm-user-accent, AccentColor) 62%, white) !important;
     }
   }
   @media (prefers-color-scheme: light) {
@@ -481,7 +481,7 @@
     outline: none !important;
   }
   :is(search-textbox, moz-input-search, input[type="search"], #search-box):focus-within {
-    outline: 2px solid var(--fm-accent, AccentColor) !important;
+    outline: 2px solid var(--fm-accent, var(--fm-user-accent, AccentColor)) !important;
     outline-offset: -2px !important;
   }
   tree, #bookmarks-view, #historyTree {
@@ -503,7 +503,7 @@
   treechildren::-moz-tree-row(selected),
   treechildren::-moz-tree-row(selected, focus),
   treechildren::-moz-tree-row(selected, current, focus) {
-    background-color: color-mix(in srgb, var(--fm-accent, AccentColor) 16%, transparent) !important;
+    background-color: color-mix(in srgb, var(--fm-accent, var(--fm-user-accent, AccentColor)) 16%, transparent) !important;
     border: 0 !important;
     outline: none !important;
   }

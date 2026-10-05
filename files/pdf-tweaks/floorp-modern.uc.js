@@ -261,6 +261,12 @@
     if (!gB) {
       return;
     }
+    // плашку можно выключить в установщике (Настройка → Плеер Now Bar)
+    try {
+      if (!Services.prefs.getBoolPref("floorp.modern.nowbar", true)) {
+        return;
+      }
+    } catch (e) {}
     const bar = el("div", "fm-nowbar");
     const eq = el("div", "fm-nowbar-eq");
     eq.append(el("span"), el("span"), el("span"));

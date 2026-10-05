@@ -44,7 +44,7 @@ TILE_SEL = ", ".join(TILES.keys())
 
 # ---------------------------------------------------------------- общие токены
 GLASS_TOKENS = r"""
-  --fm-accent: light-dark(#007AFF, #0A84FF) !important;
+  --fm-accent: light-dark(var(--fm-user-accent, #007AFF), var(--fm-user-accent, #0A84FF)) !important;
   --fm-on-accent: #ffffff !important;
   --fm-frame: light-dark(#EEF1F8, #05060B) !important;
   --fm-bar: light-dark(#FFFFFF, #1C1C1E) !important;
@@ -533,7 +533,7 @@ PDF = r"""
 /* ---------------- iOS 26 · Liquid Glass ---------------- */
 :root:has(#outerContainer #viewerContainer) {
   & {
-    --x-accent: light-dark(#007AFF, #0A84FF) !important;
+    --x-accent: light-dark(var(--fm-user-accent, #007AFF), var(--fm-user-accent, #0A84FF)) !important;
     --x-on-accent: #ffffff !important;
     --x-ground: light-dark(#ECEFF6, #07080E) !important;
     --x-bar: transparent !important;

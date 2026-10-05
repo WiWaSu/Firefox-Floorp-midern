@@ -10,8 +10,8 @@
   /* ---------- НАСТРОЙКИ: меняйте тут ---------- */
   & {
     /* Цвет акцента (активный инструмент, выделение, текущая страница) */
-    --x-accent: light-dark(AccentColor, color-mix(in srgb, AccentColor 62%, white)) !important;
-    --x-on-accent: light-dark(AccentColorText, color-mix(in srgb, AccentColor 22%, black)) !important;
+    --x-accent: light-dark(var(--fm-user-accent, AccentColor), color-mix(in srgb, var(--fm-user-accent, AccentColor) 62%, white)) !important;
+    --x-on-accent: light-dark(var(--fm-user-on-accent, AccentColorText), color-mix(in srgb, var(--fm-user-accent, AccentColor) 22%, black)) !important;
     /* Скругление страниц и отступ между ними */
     --x-radius: 10px;
     --x-gap: 18px;

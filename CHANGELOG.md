@@ -5,6 +5,12 @@
 The installer version is shown in the setup window, the console and
 `chrome\floorp-modern-version.txt` in the profile.
 
+## 1.7.0 — 2026-10-05
+- **Шесть тем**: One UI, iOS · Liquid Glass, а также новые **Material You** (Pixel, тональные цвета, часы столбиком), **Windows 11** (Fluent, строгие углы, обои Bloom), **macOS** («светофор» вместо кнопок окна, синие меню) и **Nothing** (монохром, красная точка, часы из точек).
+- **Настройка перед установкой** (окно из трёх шагов: Тема → Настройка → Браузеры): цвет акцента (Windows, 8 готовых или свой HEX), светлая/тёмная, скругление страницы и меню, включение функций (Now Bar, полоска загрузки, адрес по центру, часы и живые обои на новой вкладке, просмотрщик PDF). Установщик запоминает выбор.
+- **Форки Firefox**: Floorp, Firefox, Firefox Developer Edition, Firefox Nightly, LibreWolf, Waterfox, Zen Browser, Mercury. Для LibreWolf загрузчик дописывается в её `librewolf.cfg`, не ломая её настройки.
+- Консоль: `-Theme`, `-Accent`, `-Mode`, `-Corners`, `-Features`, `-Target all|floorp,librewolf,…`.
+
 ## 1.6.0 — 2026-10-05
 - Now Bar: обложка трека (или значок сайта), полоска прогресса, мини-режим — через 5 с плашка сворачивается в кружок и раскрывается при наведении.
 - Медиа-клавиши клавиатуры (⏯ ⏭ ⏮) управляют плашкой, пока окно браузера активно.

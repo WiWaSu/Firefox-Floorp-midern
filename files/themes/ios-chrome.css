@@ -2,7 +2,7 @@
 /* ---------------- iOS 26 · Liquid Glass ---------------- */
 :root, menupopup, panel, tooltip, #urlbar, .urlbarView {
 
-  --fm-accent: light-dark(#007AFF, #0A84FF) !important;
+  --fm-accent: light-dark(var(--fm-user-accent, #007AFF), var(--fm-user-accent, #0A84FF)) !important;
   --fm-on-accent: #ffffff !important;
   --fm-frame: light-dark(#EEF1F8, #05060B) !important;
   --fm-bar: light-dark(#FFFFFF, #1C1C1E) !important;
