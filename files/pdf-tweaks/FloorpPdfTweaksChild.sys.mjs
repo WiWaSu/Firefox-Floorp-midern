@@ -40,6 +40,9 @@ export class FloorpPdfTweaksChild extends JSWindowActorChild {
   /* Плашка Now Bar в окне спрашивает страницу о плеере:
      info — название трека, pause/play — пауза для <audio>/<video>, seek — перемотка. */
   receiveMessage(msg) {
+    if (msg.name === "FM:pdf-refresh") {
+      return this.#refreshPages();
+    }
     if (msg.name !== "FM:media") {
       return null;
     }
@@ -615,6 +618,35 @@ export class FloorpPdfTweaksChild extends JSWindowActorChild {
     sync();
   }
 
+  /* Перерисовать все страницы PDF. Нужно после переключения видеокарты
+     (встроенная ↔ дискретная): Windows сбрасывает графику, и уже нарисованные
+     страницы становятся пустыми, а PDF.js об этом не знает. */
+  #refreshPages() {
+    const doc = this.document;
+    const win = this.contentWindow;
+    try {
+      if (!doc || doc.nodePrincipal.originNoSuffix !== "resource://pdf.js") {
+        return false;
+      }
+      const viewer = win.wrappedJSObject?.PDFViewerApplication?.pdfViewer;
+      if (!viewer) {
+        return false;
+      }
+      if (typeof viewer.refresh === "function") {
+        viewer.refresh();
+      } else {
+        // старые версии PDF.js: меняем масштаб туда и обратно
+        const scale = viewer.currentScaleValue;
+        viewer.currentScaleValue = scale === "page-fit" ? "page-width" : "page-fit";
+        viewer.currentScaleValue = scale;
+      }
+      return true;
+    } catch (e) {
+      console.error("[pdf-tweaks] refresh:", e);
+      return false;
+    }
+  }
+
   /* Иногда (после быстрого перехода по страницам) PDF.js не начинает рисовать
      видимую страницу, и она остаётся пустой, пока не прокрутишь. Следим за этим:
      если видимая страница не нарисована дольше 2 с — слегка «шевелим» прокрутку,
@@ -623,6 +655,21 @@ export class FloorpPdfTweaksChild extends JSWindowActorChild {
     const doc = this.document;
     const win = this.contentWindow;
     const signal = this.#ac.signal;
+    // ручная кнопка в меню «Тема» — на случай, если страницы пропали
+    const menu = doc.getElementById("xThemeMenu");
+    if (menu && !doc.getElementById("xRefreshPages")) {
+      const b = doc.createElement("button");
+      b.type = "button";
+      b.id = "xRefreshPages";
+      b.className = "x-refresh";
+      b.textContent = "↻ Перерисовать страницы";
+      b.addEventListener("click", () => {
+        this.#refreshPages();
+        menu.hidden = true;
+        doc.getElementById("xThemeButton")?.setAttribute("aria-expanded", "false");
+      }, { signal });
+      menu.append(b);
+    }
     const waiting = new Map(); // номер страницы → когда заметили пустой
     const timer = win.setInterval(() => {
       const box = doc.getElementById("viewerContainer");

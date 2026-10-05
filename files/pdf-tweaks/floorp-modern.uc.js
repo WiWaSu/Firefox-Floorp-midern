@@ -708,4 +708,42 @@
       }
     }, true);
   });
+  safe("gpu switch", () => {
+    /* ---- переключение видеокарты (встроенная ↔ дискретная) ----
+       Windows сбрасывает графику, и открытые PDF остаются с пустыми страницами.
+       Ловим сброс и просим все открытые PDF перерисоваться (сейчас и ещё раз чуть позже). */
+    const gB = win.gBrowser;
+    if (!gB) {
+      return;
+    }
+    const refreshAll = () => {
+      for (const tab of gB.tabs) {
+        try {
+          for (const bc of tab.linkedBrowser.browsingContext.getAllBrowsingContextsInSubtree()) {
+            bc.currentWindowGlobal?.getActor("FloorpPdfTweaks")?.sendAsyncMessage("FM:pdf-refresh");
+          }
+        } catch (e) {}
+      }
+    };
+    let lastReset = 0;
+    const observer = {
+      observe(subject, topic) {
+        const now = Date.now();
+        if (now - lastReset < 3000) {
+          return;
+        }
+        lastReset = now;
+        log("сброс графики: " + topic);
+        win.setTimeout(refreshAll, 1200);
+        win.setTimeout(refreshAll, 4000);
+      },
+    };
+    const topics = ["compositor-reinitialized", "graphics-device-reset", "gpu-process-crashed"];
+    for (const t of topics) {
+      Services.obs.addObserver(observer, t);
+    }
+    onUnload.push(() => topics.forEach(t => {
+      try { Services.obs.removeObserver(observer, t); } catch (e) {}
+    }));
+  });
 })();

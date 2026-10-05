@@ -464,6 +464,8 @@
   }
   & #xThemeMenu button:hover { background: var(--x-hover); }
   & #xThemeMenu button[aria-pressed="true"] { background: var(--x-accent); color: var(--x-on-accent); }
+  & #xThemeMenu .x-refresh { margin-top: 6px; border-top: 1px solid var(--x-line) !important; border-radius: 12px; height: 34px; color: var(--x-muted); }
+  & #xThemeMenu .x-refresh:hover { color: var(--x-ink); }
   & #xThemeMenu .x-sw { width: 11px; height: 11px; border-radius: 50%; border: 1px solid var(--x-line); flex: none; }
   /* своя палитра вместо системного окна «Цвет»: всё с !important,
      иначе общие правила для кнопок просмотрщика перекрашивают кружки */
