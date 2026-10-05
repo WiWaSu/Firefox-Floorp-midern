@@ -572,7 +572,7 @@ PDF = r"""
     box-shadow: var(--x-rim), 0 6px 18px light-dark(rgb(40 50 90 / .14), rgb(0 0 0 / .4)) !important;
     backdrop-filter: blur(18px) saturate(190%) !important;
   }
-  & :is(.doorHanger, .doorHangerRight, #findbar, #secondaryToolbar, .editorParamsToolbar:not(#editorCommentParamsToolbar), .popupMenu, #xThemeMenu, #xColorPop, #xNotice) {
+  & :is(.doorHanger, .doorHangerRight, #findbar, #secondaryToolbar, .editorParamsToolbar:not(#editorCommentParamsToolbar), .popupMenu, #xThemeMenu, #xColorPop, #xNotice, #xBookMenu) {
     background-color: light-dark(rgb(250 250 253 / .78), rgb(34 34 40 / .7)) !important;
     background-image: var(--x-sheen) !important;
     border: 0 !important;

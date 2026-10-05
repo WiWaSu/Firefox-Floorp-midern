@@ -72,6 +72,36 @@ export class FloorpPdfTweaksParent extends JSWindowActorParent {
       boot();
       return;
     }
+    if (msg.name === "PdfTweaks:bookmarks") {
+      // закладки страниц: { url: [{p, note, t}] }, не больше 150 файлов и 300 закладок в файле
+      const { url, list } = msg.data || {};
+      if (typeof url !== "string" || !url || url.length > 2000 || !Array.isArray(list)) {
+        return;
+      }
+      let map = {};
+      try {
+        map = JSON.parse(Services.prefs.getStringPref("floorp.pdftweaks.bookmarks", "{}")) || {};
+      } catch (e) {}
+      const clean = list
+        .filter(b => b && Number(b.p) > 0)
+        .slice(0, 300)
+        .map(b => ({ p: Math.floor(Number(b.p)), note: String(b.note || "").slice(0, 80), t: Number(b.t) || Date.now() }));
+      if (clean.length) {
+        map[url] = clean;
+      } else {
+        delete map[url];
+      }
+      const keys = Object.keys(map);
+      if (keys.length > 150) {
+        const last = k => Math.max(0, ...map[k].map(b => b.t || 0));
+        keys.sort((a, b) => last(a) - last(b));
+        for (const k of keys.slice(0, keys.length - 150)) {
+          delete map[k];
+        }
+      }
+      Services.prefs.setStringPref("floorp.pdftweaks.bookmarks", JSON.stringify(map));
+      return;
+    }
     if (msg.name === "PdfTweaks:page") {
       // запоминаем страницу для файла (последние 150 файлов)
       const { url, page } = msg.data || {};

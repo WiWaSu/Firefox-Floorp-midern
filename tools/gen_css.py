@@ -53,6 +53,9 @@ ICONS = {
     "--x-theme-auto-icon": svg("<circle cx='12' cy='12' r='8'/>" + P("M12 4a8 8 0 0 1 0 16z").replace("/>", " fill='black'/>")),
     "--x-theme-light-icon": svg("<circle cx='12' cy='12' r='4'/>" + P("M12 2.5v2M12 19.5v2M2.5 12h2M19.5 12h2M5.3 5.3l1.4 1.4M17.3 17.3l1.4 1.4M5.3 18.7l1.4-1.4M17.3 6.7l1.4-1.4")),
     "--x-theme-dark-icon": svg(P("M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z")),
+    # закладки страниц
+    "--x-bookmark-icon": svg(P("M7 3.5h10a1 1 0 0 1 1 1v16l-6-4-6 4v-16a1 1 0 0 1 1-1z")),
+    "--x-bookmark-on-icon": svg(P("M7 3.5h10a1 1 0 0 1 1 1v16l-6-4-6 4v-16a1 1 0 0 1 1-1z").replace("/>", " fill='black'/>")),
 }
 
 icon_vars = "\n".join(f"    {k}: {v} !important;" for k, v in ICONS.items())
@@ -285,7 +288,7 @@ CSS = r"""
   }
 
   /* ================= ВСПЛЫВАЮЩИЕ ПАНЕЛИ ================= */
-  & :is(.doorHanger, .doorHangerRight, #findbar, #secondaryToolbar, .editorParamsToolbar:not(#editorCommentParamsToolbar), .popupMenu, #xThemeMenu) {
+  & :is(.doorHanger, .doorHangerRight, #findbar, #secondaryToolbar, .editorParamsToolbar:not(#editorCommentParamsToolbar), .popupMenu, #xThemeMenu, #xBookMenu) {
     background: var(--x-bar) !important;
     border: 1px solid var(--x-line) !important;
     border-radius: 24px !important;
@@ -415,6 +418,48 @@ CSS = r"""
   &[data-x-ui="light"] #xThemeButton::before { mask-image: var(--x-theme-light-icon) !important; }
   &[data-x-ui="dark"] #xThemeButton::before { mask-image: var(--x-theme-dark-icon) !important; }
   & #xThemeWrap { position: relative; display: flex; align-items: center; }
+
+  /* ================= ЗАКЛАДКИ СТРАНИЦ ================= */
+  & #xBookButton::before { mask-image: var(--x-bookmark-icon) !important; }
+  & #xBookButton[data-on]::before { mask-image: var(--x-bookmark-on-icon) !important; background-color: var(--x-accent) !important; }
+  & #xBookWrap { position: relative; display: flex; align-items: center; }
+  & #xBookMenu {
+    position: absolute; top: calc(100% + 10px); inset-inline-end: -4px; z-index: 30000;
+    width: 290px; max-height: min(70vh, 520px); overflow: auto; padding: 8px;
+    display: grid; gap: 2px; color: var(--x-ink); font-size: 13px;
+  }
+  & #xBookMenu .x-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 4px 4px 8px 10px; }
+  & #xBookMenu .x-title { font-weight: 700; font-size: 15px; }
+  & #xBookMenu button {
+    appearance: none !important; font: inherit; color: var(--x-ink); background: none; border: 0; cursor: pointer;
+  }
+  & #xBookMenu .x-add {
+    padding: 6px 12px; border-radius: 999px; background: var(--x-accent) !important; color: var(--x-on-accent) !important;
+    font-weight: 600; white-space: nowrap;
+  }
+  & #xBookMenu .x-add[data-on] { background: var(--x-hover) !important; color: var(--x-ink) !important; }
+  & #xBookMenu .x-item {
+    display: flex; align-items: center; gap: 10px; border-radius: 12px; padding: 4px 4px 4px 8px;
+  }
+  & #xBookMenu .x-item:hover { background: var(--x-hover); }
+  & #xBookMenu .x-item[data-current] { background: var(--x-soft); }
+  & #xBookMenu .x-go { flex: 1; min-width: 0; display: flex; align-items: center; gap: 10px; text-align: start; padding: 4px 0; }
+  & #xBookMenu .x-num {
+    flex: none; min-width: 34px; height: 26px; padding: 0 6px; box-sizing: border-box;
+    display: grid; place-items: center; border-radius: 8px;
+    background: var(--x-accent); color: var(--x-on-accent); font-weight: 700; font-size: 12px;
+  }
+  & #xBookMenu .x-note { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--x-muted); }
+  & #xBookMenu .x-del { flex: none; width: 28px; height: 28px; border-radius: 50%; color: var(--x-muted); font-size: 16px; line-height: 1; }
+  & #xBookMenu .x-del:hover { background: var(--x-press); color: var(--x-ink); }
+  & #xBookMenu .x-empty { padding: 10px 10px 12px; color: var(--x-muted); line-height: 1.45; }
+  /* ленточка на странице с закладкой */
+  & .pdfViewer .page.x-bookmarked::after {
+    content: ""; position: absolute; top: -3px; inset-inline-end: 28px; z-index: 6;
+    width: 18px; height: 30px; background: var(--x-accent);
+    clip-path: polygon(0 0, 100% 0, 100% 100%, 50% 74%, 0 100%);
+    filter: drop-shadow(0 2px 3px rgb(0 0 0 / .3)); pointer-events: none;
+  }
   & #xThemeMenu {
     position: absolute; top: calc(100% + 10px); inset-inline-end: -4px; z-index: 30000;
     min-width: 210px; padding: 8px; display: grid; gap: 4px;

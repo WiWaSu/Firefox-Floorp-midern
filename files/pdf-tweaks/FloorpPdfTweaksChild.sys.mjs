@@ -178,6 +178,11 @@ export class FloorpPdfTweaksChild extends JSWindowActorChild {
       console.error("[pdf-tweaks] resume:", e);
     }
     try {
+      this.#setupBookmarks();
+    } catch (e) {
+      console.error("[pdf-tweaks] bookmarks:", e);
+    }
+    try {
       this.#setupQuickText();
     } catch (e) {
       console.error("[pdf-tweaks] quick text:", e);
@@ -398,6 +403,211 @@ export class FloorpPdfTweaksChild extends JSWindowActorChild {
       }
     }, 1500);
     signal.addEventListener("abort", () => win.clearInterval(timer));
+  }
+
+  /* Закладки страниц: кнопка-ленточка на панели, список закладок файла,
+     Ctrl+B — добавить или убрать закладку на текущей странице.
+     На страницах с закладкой в углу видна ленточка. Хранятся для каждого файла. */
+  #setupBookmarks() {
+    const doc = this.document;
+    const win = this.contentWindow;
+    const signal = this.#ac.signal;
+    const key = String(win.location.href).split("#")[0];
+    const right = doc.getElementById("toolbarViewerRight");
+    if (!key || !right || doc.getElementById("xBookWrap")) {
+      return;
+    }
+    const load = () => {
+      try {
+        const all = JSON.parse(Services.prefs.getStringPref("floorp.pdftweaks.bookmarks", "{}"));
+        return Array.isArray(all[key]) ? all[key].filter(b => b && b.p > 0) : [];
+      } catch {
+        return [];
+      }
+    };
+    let list = load();
+    const save = () => {
+      try {
+        this.sendAsyncMessage("PdfTweaks:bookmarks", { url: key, list });
+      } catch {}
+    };
+    const pageInput = () => doc.getElementById("pageNumber");
+    const current = () => Number(pageInput()?.value) || 0;
+    const goTo = n => {
+      const el = pageInput();
+      if (!el) {
+        return;
+      }
+      el.value = String(n);
+      el.dispatchEvent(new win.Event("change", { bubbles: true }));
+    };
+    const noteFor = n => {
+      // начало текста страницы — чтобы в списке было понятно, что там
+      const spans = doc.querySelectorAll(`.page[data-page-number="${n}"] .textLayer span`);
+      let t = "";
+      for (const sp of spans) {
+        t += (sp.textContent || "") + " ";
+        if (t.length > 80) {
+          break;
+        }
+      }
+      return t.replace(/\s+/g, " ").trim().slice(0, 70);
+    };
+
+    const wrap = doc.createElement("div");
+    wrap.id = "xBookWrap";
+    wrap.className = "toolbarHorizontalGroup";
+    const btn = doc.createElement("button");
+    btn.id = "xBookButton";
+    btn.className = "toolbarButton";
+    btn.type = "button";
+    btn.title = "Закладки (Ctrl+B — закладка на этой странице)";
+    btn.setAttribute("aria-haspopup", "true");
+    btn.setAttribute("aria-expanded", "false");
+    const label = doc.createElement("span");
+    label.textContent = "Закладки";
+    btn.append(label);
+    const menu = doc.createElement("div");
+    menu.id = "xBookMenu";
+    menu.hidden = true;
+    menu.setAttribute("role", "dialog");
+    menu.setAttribute("aria-label", "Закладки");
+    wrap.append(btn, menu);
+    const themeWrap = doc.getElementById("xThemeWrap");
+    if (themeWrap && themeWrap.parentNode === right) {
+      right.insertBefore(wrap, themeWrap);
+    } else {
+      right.append(wrap);
+    }
+
+    const has = n => list.some(b => b.p === n);
+    const toggle = n => {
+      if (!n) {
+        return;
+      }
+      if (has(n)) {
+        list = list.filter(b => b.p !== n);
+        this.#notice(`Закладка со стр. ${n} убрана`);
+      } else {
+        list.push({ p: n, note: noteFor(n), t: Date.now() });
+        list.sort((a, b) => a.p - b.p);
+        this.#notice(`Стр. ${n} в закладках`);
+      }
+      save();
+      sync();
+      render();
+    };
+    const render = () => {
+      if (menu.hidden) {
+        return;
+      }
+      menu.textContent = "";
+      const now = current();
+      const head = doc.createElement("div");
+      head.className = "x-head";
+      const title = doc.createElement("span");
+      title.className = "x-title";
+      title.textContent = "Закладки";
+      const add = doc.createElement("button");
+      add.type = "button";
+      add.className = "x-add";
+      if (has(now)) {
+        add.setAttribute("data-on", "");
+        add.textContent = `Убрать стр. ${now}`;
+      } else {
+        add.textContent = `+ Стр. ${now || 1}`;
+      }
+      add.addEventListener("click", () => toggle(now || 1), { signal });
+      head.append(title, add);
+      menu.append(head);
+      if (!list.length) {
+        const empty = doc.createElement("div");
+        empty.className = "x-empty";
+        empty.textContent = "Пока пусто. Нажмите «+», чтобы запомнить страницу, или Ctrl+B в любой момент.";
+        menu.append(empty);
+        return;
+      }
+      for (const b of list) {
+        const row = doc.createElement("div");
+        row.className = "x-item";
+        if (b.p === now) {
+          row.setAttribute("data-current", "");
+        }
+        const go = doc.createElement("button");
+        go.type = "button";
+        go.className = "x-go";
+        const num = doc.createElement("span");
+        num.className = "x-num";
+        num.textContent = String(b.p);
+        const note = doc.createElement("span");
+        note.className = "x-note";
+        note.textContent = b.note || `Страница ${b.p}`;
+        go.append(num, note);
+        go.title = `Перейти на стр. ${b.p}`;
+        go.addEventListener("click", () => {
+          goTo(b.p);
+          setOpen(false);
+        }, { signal });
+        const del = doc.createElement("button");
+        del.type = "button";
+        del.className = "x-del";
+        del.textContent = "×";
+        del.title = "Убрать закладку";
+        del.addEventListener("click", e => {
+          e.stopPropagation();
+          toggle(b.p);
+        }, { signal });
+        row.append(go, del);
+        menu.append(row);
+      }
+    };
+    // ленточки на страницах и состояние кнопки
+    const sync = () => {
+      const set = new Set(list.map(b => b.p));
+      for (const page of doc.querySelectorAll(".pdfViewer .page[data-page-number]")) {
+        page.classList.toggle("x-bookmarked", set.has(Number(page.getAttribute("data-page-number"))));
+      }
+      btn.toggleAttribute("data-on", set.has(current()));
+    };
+    const setOpen = open => {
+      menu.hidden = !open;
+      btn.setAttribute("aria-expanded", String(open));
+      if (open) {
+        render();
+        // не даём списку вылезти за край окна
+        menu.style.setProperty("translate", "0 0");
+        const r = menu.getBoundingClientRect();
+        const dx = r.right > win.innerWidth - 8 ? win.innerWidth - 8 - r.right : (r.left < 8 ? 8 - r.left : 0);
+        menu.style.setProperty("translate", `${Math.round(dx)}px 0`);
+      }
+    };
+    btn.addEventListener("click", e => {
+      e.stopPropagation();
+      setOpen(menu.hidden);
+    }, { signal });
+    doc.addEventListener("pointerdown", e => {
+      if (!menu.hidden && !wrap.contains(e.target)) {
+        setOpen(false);
+      }
+    }, { capture: true, signal });
+    doc.addEventListener("keydown", e => {
+      if (e.key === "Escape" && !menu.hidden) {
+        setOpen(false);
+        btn.focus();
+        return;
+      }
+      if ((e.ctrlKey || e.metaKey) && !e.shiftKey && !e.altKey && (e.code === "KeyB")) {
+        if (e.target?.closest?.("input, textarea, [contenteditable='true'], .freeTextEditor")) {
+          return;
+        }
+        e.preventDefault();
+        e.stopPropagation();
+        toggle(current());
+      }
+    }, { capture: true, signal });
+    const timer = win.setInterval(sync, 1500);
+    signal.addEventListener("abort", () => win.clearInterval(timer));
+    sync();
   }
 
   /* Короткое уведомление внизу просмотрщика с кнопкой действия. */

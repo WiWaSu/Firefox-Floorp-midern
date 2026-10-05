@@ -4,7 +4,7 @@
 
 Supported browsers: Floorp, Firefox, Firefox Developer Edition, Firefox Nightly, LibreWolf, Waterfox, Zen Browser, Mercury.
 
-[Русская версия ниже](#русский) · Version **1.7.0** · [Changelog](CHANGELOG.md)
+[Русская версия ниже](#русский) · Version **1.8.0** · [Changelog](CHANGELOG.md)
 
 ![New tab page preview](docs/newtab-preview.png)
 
@@ -46,6 +46,7 @@ Supported browsers: Floorp, Firefox, Firefox Developer Edition, Firefox Nightly,
 - Theme button: UI Auto / Light / Dark, pages Auto / Paper / Sepia / Night.
 - **Edge-style ink**: drawings have no selection frame; you grab a drawing only by its strokes and can keep drawing right next to it.
 - Reopens each PDF on the page where you left off.
+- Page bookmarks: ribbon button with a list per file, `Ctrl+B` toggles the current page.
 - Quick text: click a “……” gap or double-click an empty spot and start typing.
 - Own color palette instead of the Windows color dialog.
 
@@ -159,6 +160,7 @@ This is an unofficial community mod. It is not affiliated with or endorsed by Mo
 - Кнопка темы: интерфейс и цвет страниц (бумага, сепия, ночь).
 - **Рисование как в Edge**: у рисунка нет рамки, хватается он только за линии, рядом можно рисовать дальше.
 - PDF открывается на той странице, где вы остановились.
+- Закладки страниц: кнопка-ленточка со списком для каждого файла, `Ctrl+B` — закладка на текущей странице.
 - Быстрый текст: клик по пропуску «……» или двойной клик по пустому месту — и сразу печатаете.
 - Своя палитра цветов вместо системного окна Windows.
 
