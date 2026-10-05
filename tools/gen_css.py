@@ -507,6 +507,25 @@ CSS = r"""
     flex: none !important; width: auto !important; margin: 0 !important; padding: 7px 14px !important;
     background: var(--x-accent) !important; color: var(--x-on-accent) !important; font-weight: 600 !important;
   }
+  /* уведомление «Открыто на стр. N» */
+  & #xNotice {
+    position: fixed !important; left: 50% !important; bottom: 24px !important; z-index: 100000 !important;
+    translate: -50% 0 !important;
+    display: flex !important; align-items: center !important; gap: 12px !important;
+    padding: 8px 8px 8px 18px !important; border-radius: 999px !important;
+    background: var(--x-bar) !important; color: var(--x-ink) !important;
+    border: 1px solid var(--x-line) !important; box-shadow: var(--x-pop) !important;
+    font: 500 13.5px "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif !important;
+    animation: x-pop .25s cubic-bezier(.2, .9, .3, 1.15) both;
+    transition: opacity .3s ease, translate .3s ease !important;
+  }
+  & #xNotice.x-out { opacity: 0 !important; translate: -50% 10px !important; }
+  & #xNotice button {
+    appearance: none !important; border: 0 !important; cursor: pointer !important;
+    padding: 6px 14px !important; border-radius: 999px !important;
+    background: var(--x-accent) !important; color: var(--x-on-accent) !important;
+    font: 600 13px "Segoe UI Variable Display", "Segoe UI", system-ui, sans-serif !important;
+  }
   @keyframes x-pop { from { opacity: 0; transform: translateY(-6px) scale(.96); } }
 
   /* полосы прокрутки */

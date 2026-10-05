@@ -264,6 +264,15 @@
     const bar = el("div", "fm-nowbar");
     const eq = el("div", "fm-nowbar-eq");
     eq.append(el("span"), el("span"), el("span"));
+    // обложка трека поверх эквалайзера (если сайт её даёт)
+    const art = el("img", "fm-nowbar-art");
+    art.alt = "";
+    art.addEventListener("error", () => art.removeAttribute("src"));
+    eq.append(art);
+    // тонкая полоска прогресса по низу плашки
+    const progress = el("div", "fm-nowbar-progress");
+    const progressFill = el("div", "fm-nowbar-progress-fill");
+    progress.append(progressFill);
     const title = el("div", "fm-nowbar-title");
     const prev = el("div", "fm-nowbar-btn fm-nowbar-prev");
     const play = el("div", "fm-nowbar-btn fm-nowbar-play");
@@ -275,7 +284,7 @@
     play.title = "Пауза / продолжить";
     mute.title = "Звук вкладки";
     close.title = "Скрыть";
-    bar.append(eq, title, prev, play, next, mute, close);
+    bar.append(eq, title, prev, play, next, mute, close, progress);
     host.after(bar);
 
     let current = null;      // вкладка, которую показывает плашка
@@ -485,38 +494,96 @@
 
     /* ---- название трека: Media Session сайта или сам плеер на странице ---- */
     let titleTimer = 0;
+    let tick = 0;
+    const bigArt = list => {
+      const arr = [...(list || [])].filter(a => a?.src);
+      const size = a => Math.max(0, ...String(a.sizes || "").split(/\s+/).map(x => parseInt(x, 10) || 0));
+      arr.sort((x, y) => size(y) - size(x));
+      return arr[0]?.src || "";
+    };
     async function refreshTitle() {
       const tab = current;
       if (!tab) {
         return;
       }
-      let name = "";
+      tick++;
+      let name = "", cover = "";
       try {
         const md = controller(tab)?.getMetadata?.();
         if (md?.title && md.title !== tab.label) {
           name = md.artist ? `${md.title} — ${md.artist}` : md.title;
         }
+        cover = bigArt(md?.artwork);
       } catch (e) {}
-      if (!name) {
-        for (const r of await pageMedia(tab, { action: "info" })) {
-          if (r.title) {
-            name = r.artist ? `${r.title} — ${r.artist}` : r.title;
-            break;
-          }
+      let pos = null;
+      for (const r of await pageMedia(tab, { action: "info" })) {
+        if (!name && r.title) {
+          name = r.artist ? `${r.title} — ${r.artist}` : r.title;
+        }
+        if (!cover && r.artwork) {
+          cover = r.artwork;
+        }
+        if (!pos && r.duration > 0) {
+          pos = r;
         }
       }
-      if (tab === current) {
-        title.textContent = name || tab.label || "Музыка";
-        title.title = (name ? name + "\n" : "") + (tab.label || "");
+      if (tab !== current) {
+        return;
+      }
+      title.textContent = name || tab.label || "Музыка";
+      title.title = (name ? name + "\n" : "") + (tab.label || "");
+      // обложка: картинка сайта, иначе значок вкладки
+      const src = /^(https?|data|blob):/.test(cover) ? cover : (tab.image || "");
+      if (src && art.getAttribute("src") !== src) {
+        art.setAttribute("src", src);
+      }
+      bar.toggleAttribute("data-art", !!src);
+      bar.toggleAttribute("data-progress", !!pos);
+      if (pos) {
+        progressFill.style.transform = `scaleX(${Math.min(1, Math.max(0, pos.position / pos.duration)).toFixed(4)})`;
       }
     }
     const pollTitle = on => {
       win.clearInterval(titleTimer);
       if (on) {
         refreshTitle();
-        titleTimer = win.setInterval(refreshTitle, 3000);
+        titleTimer = win.setInterval(refreshTitle, 1000);
+        scheduleMini();
+      } else {
+        bar.classList.remove("fm-mini");
       }
     };
+
+    /* ---- мини-режим: через 5 с плашка сворачивается в кружок с обложкой,
+       при наведении снова раскрывается (как Dynamic Island) ---- */
+    let miniTimer = 0;
+    function scheduleMini() {
+      win.clearTimeout(miniTimer);
+      miniTimer = win.setTimeout(() => {
+        if (!bar.matches(":hover") && !drag) {
+          bar.classList.add("fm-mini");
+        }
+      }, 5000);
+    }
+    bar.addEventListener("mouseenter", () => {
+      win.clearTimeout(miniTimer);
+      bar.classList.remove("fm-mini");
+    });
+    bar.addEventListener("mouseleave", scheduleMini);
+
+    /* ---- медиа-клавиши клавиатуры, пока окно браузера активно ---- */
+    win.addEventListener("keydown", e => {
+      if (!current || !bar.classList.contains("fm-in")) {
+        return;
+      }
+      const map = { MediaPlayPause: () => play.click(), MediaTrackNext: () => next.click(), MediaTrackPrevious: () => prev.click() };
+      const fn = map[e.key];
+      if (fn) {
+        e.preventDefault();
+        e.stopPropagation();
+        fn();
+      }
+    }, true);
     mute.addEventListener("click", () => {
       current?.toggleMuteAudio();
       render();

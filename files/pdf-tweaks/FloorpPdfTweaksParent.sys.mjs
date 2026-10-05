@@ -72,6 +72,27 @@ export class FloorpPdfTweaksParent extends JSWindowActorParent {
       boot();
       return;
     }
+    if (msg.name === "PdfTweaks:page") {
+      // запоминаем страницу для файла (последние 150 файлов)
+      const { url, page } = msg.data || {};
+      if (typeof url !== "string" || !url || url.length > 2000 || !(page > 0)) {
+        return;
+      }
+      let map = {};
+      try {
+        map = JSON.parse(Services.prefs.getStringPref("floorp.pdftweaks.pages", "{}")) || {};
+      } catch (e) {}
+      map[url] = { p: Math.floor(page), t: Date.now() };
+      const keys = Object.keys(map);
+      if (keys.length > 150) {
+        keys.sort((a, b) => (map[a].t || 0) - (map[b].t || 0));
+        for (const k of keys.slice(0, keys.length - 150)) {
+          delete map[k];
+        }
+      }
+      Services.prefs.setStringPref("floorp.pdftweaks.pages", JSON.stringify(map));
+      return;
+    }
     if (msg.name !== "PdfTweaks:save") {
       return;
     }

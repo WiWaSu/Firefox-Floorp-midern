@@ -352,6 +352,28 @@ moz-urlbar:not([focused], [open]) .urlbar-input { text-align: center !important;
 .fm-nowbar[data-moved] { translate: 0 18px; }
 .fm-nowbar[data-moved].fm-in { translate: 0 0; }
 .fm-nowbar-btn[hidden] { display: none !important; }
+/* обложка трека в кружке слева */
+.fm-nowbar-eq { position: relative; overflow: hidden; }
+.fm-nowbar-art { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: none; }
+.fm-nowbar[data-art] .fm-nowbar-art { display: block; }
+.fm-nowbar[data-art] .fm-nowbar-eq { box-shadow: 0 0 0 1px var(--fm-line); }
+.fm-nowbar[data-art][data-paused] .fm-nowbar-art { opacity: .55; filter: grayscale(.4); }
+/* полоска прогресса */
+.fm-nowbar-progress {
+  position: absolute; left: 46px; right: 16px; bottom: 3px; height: 2px;
+  border-radius: 2px; background: var(--fm-line); overflow: hidden; display: none;
+}
+.fm-nowbar[data-progress] .fm-nowbar-progress { display: block; }
+.fm-nowbar-progress-fill {
+  height: 100%; background: var(--fm-accent); transform-origin: 0 50%; transform: scaleX(0);
+  transition: transform 1s linear;
+}
+/* мини-режим: только кружок с обложкой, при наведении раскрывается */
+.fm-nowbar.fm-mini { padding: 5px; gap: 0; }
+.fm-nowbar.fm-mini > :not(.fm-nowbar-eq) { display: none !important; }
+.fm-nowbar.fm-mini .fm-nowbar-eq { width: 34px; height: 34px; }
+.fm-nowbar.fm-in:not(.fm-mini) { animation: fm-nowbar-grow .35s cubic-bezier(.2, .9, .25, 1.15); }
+@keyframes fm-nowbar-grow { from { scale: .92; } }
 .fm-nowbar-prev { background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='context-fill'><rect x='5' y='6' width='2.4' height='12' rx='1.2'/><path d='M18.5 6.6v10.8a1 1 0 0 1-1.55.83L9.3 13.07a1.3 1.3 0 0 1 0-2.14l7.65-5.16a1 1 0 0 1 1.55.83z'/></svg>"); }
 .fm-nowbar-next { background-image: url("data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='context-fill'><rect x='16.6' y='6' width='2.4' height='12' rx='1.2'/><path d='M5.5 6.6v10.8a1 1 0 0 0 1.55.83l7.65-5.16a1.3 1.3 0 0 0 0-2.14L7.05 5.77A1 1 0 0 0 5.5 6.6z'/></svg>"); }
 

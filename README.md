@@ -2,7 +2,7 @@
 
 **A redesign for [Floorp](https://floorp.app) and Firefox on Windows in two styles — Samsung One UI or iOS 26 Liquid Glass — with a reworked built-in PDF viewer.**
 
-[Русская версия ниже](#русский) · Version **1.5.1** · [Changelog](CHANGELOG.md)
+[Русская версия ниже](#русский) · Version **1.6.0** · [Changelog](CHANGELOG.md)
 
 ![New tab page preview](docs/newtab-preview.png)
 
@@ -39,6 +39,9 @@
 - New toolbar: grouped pill buttons, new icons.
 - Theme button: UI Auto / Light / Dark, pages Auto / Paper / Sepia / Night.
 - **Edge-style ink**: drawings have no selection frame; you grab a drawing only by its strokes and can keep drawing right next to it.
+- Reopens each PDF on the page where you left off.
+- Quick text: click a “……” gap or double-click an empty spot and start typing.
+- Own color palette instead of the Windows color dialog.
 
 ## Requirements
 
@@ -143,6 +146,9 @@ This is an unofficial community mod. It is not affiliated with or endorsed by Mo
 - Новая панель и иконки.
 - Кнопка темы: интерфейс и цвет страниц (бумага, сепия, ночь).
 - **Рисование как в Edge**: у рисунка нет рамки, хватается он только за линии, рядом можно рисовать дальше.
+- PDF открывается на той странице, где вы остановились.
+- Быстрый текст: клик по пропуску «……» или двойной клик по пустому месту — и сразу печатаете.
+- Своя палитра цветов вместо системного окна Windows.
 
 ### Установка
 

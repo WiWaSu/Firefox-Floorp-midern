@@ -74,7 +74,21 @@ export class FloorpPdfTweaksChild extends JSWindowActorChild {
           artist = text([".pinned-audio-subtitle", ".pinned-container .audio-subtitle", ".AudioPlayer-content .subtitle",
             ".audio-player .subtitle", "[class*='AudioPlayer'] [class*='subtitle']"]);
         }
-        return { title: title.slice(0, 120), artist: artist.slice(0, 80), playing: media.some(m => !m.paused) };
+        let artwork = "";
+        try {
+          const list = [...(win.navigator.mediaSession?.metadata?.artwork || [])];
+          artwork = list.length ? String(list[list.length - 1].src || "") : "";
+        } catch {}
+        // позиция: первый играющий (или поставленный нами на паузу) звук с длительностью
+        const m = media.find(x => (!x.paused || x.hasAttribute("data-fm-paused")) && isFinite(x.duration) && x.duration > 0);
+        return {
+          title: title.slice(0, 120),
+          artist: artist.slice(0, 80),
+          artwork: artwork.slice(0, 2000),
+          playing: media.some(x => !x.paused),
+          position: m ? m.currentTime : 0,
+          duration: m ? m.duration : 0,
+        };
       }
       if (action === "pause") {
         let count = 0;
@@ -157,6 +171,16 @@ export class FloorpPdfTweaksChild extends JSWindowActorChild {
       this.#setupColorPicker();
     } catch (e) {
       console.error("[pdf-tweaks] colors:", e);
+    }
+    try {
+      this.#setupResume();
+    } catch (e) {
+      console.error("[pdf-tweaks] resume:", e);
+    }
+    try {
+      this.#setupQuickText();
+    } catch (e) {
+      console.error("[pdf-tweaks] quick text:", e);
     }
   }
 
@@ -327,6 +351,174 @@ export class FloorpPdfTweaksChild extends JSWindowActorChild {
   }
 
   /* ------------------------------- ink ------------------------------- */
+
+  /* Открывать документ там, где остановился.
+     Номер страницы запоминается для каждого файла (последние 150 файлов). */
+  #setupResume() {
+    const doc = this.document;
+    const win = this.contentWindow;
+    const signal = this.#ac.signal;
+    const key = String(win.location.href).split("#")[0];
+    if (!key || /#page=|#nameddest=/.test(win.location.href)) {
+      return;
+    }
+    let saved = 0;
+    try {
+      const map = JSON.parse(Services.prefs.getStringPref("floorp.pdftweaks.pages", "{}"));
+      saved = Number(map[key]?.p) || 0;
+    } catch {}
+    const input = () => doc.getElementById("pageNumber");
+    const total = () => Number(input()?.max) || 0;
+    let last = 0;
+    let restored = saved < 2;
+    const timer = win.setInterval(() => {
+      const el = input();
+      if (!el || !total()) {
+        return; // документ ещё грузится
+      }
+      const now = Number(el.value) || 0;
+      if (!restored) {
+        restored = true;
+        if (now <= 1 && saved > 1 && saved <= total()) {
+          el.value = String(saved);
+          el.dispatchEvent(new win.Event("change", { bubbles: true }));
+          this.#notice(`Открыто на стр. ${saved} — там, где вы остановились`, "С начала", () => {
+            el.value = "1";
+            el.dispatchEvent(new win.Event("change", { bubbles: true }));
+          });
+          last = saved;
+          return;
+        }
+      }
+      if (now && now !== last) {
+        last = now;
+        try {
+          this.sendAsyncMessage("PdfTweaks:page", { url: key, page: now });
+        } catch {}
+      }
+    }, 1500);
+    signal.addEventListener("abort", () => win.clearInterval(timer));
+  }
+
+  /* Короткое уведомление внизу просмотрщика с кнопкой действия. */
+  #notice(text, actionLabel, action) {
+    const doc = this.document;
+    const win = this.contentWindow;
+    doc.getElementById("xNotice")?.remove();
+    const box = doc.createElement("div");
+    box.id = "xNotice";
+    const span = doc.createElement("span");
+    span.textContent = text;
+    box.append(span);
+    if (actionLabel) {
+      const b = doc.createElement("button");
+      b.type = "button";
+      b.textContent = actionLabel;
+      b.addEventListener("click", () => {
+        box.remove();
+        action?.();
+      });
+      box.append(b);
+    }
+    doc.body.append(box);
+    win.setTimeout(() => box.classList.add("x-out"), 5000);
+    win.setTimeout(() => box.remove(), 5400);
+  }
+
+  /* Быстрый текст: клик по пропуску «……» в тексте или двойной клик по пустому
+     месту страницы — сразу появляется поле, можно печатать. Когда закончил
+     и кликнул мимо, инструмент «Текст» сам выключается. */
+  #setupQuickText() {
+    const doc = this.document;
+    const win = this.contentWindow;
+    const signal = this.#ac.signal;
+    const toolBtn = () => doc.getElementById("editorFreeTextButton");
+    const modeOn = () => {
+      const b = toolBtn();
+      return !!b && (b.getAttribute("aria-pressed") === "true" || b.classList.contains("toggled"));
+    };
+    const anyMode = () => !!doc.querySelector("#editorModeButtons [aria-pressed='true'], #editorModeButtons .toggled");
+    const GAP = /[.…_]{3,}|…{2,}/;
+    let ours = false;
+
+    const create = (page, x, y) => {
+      const btn = toolBtn();
+      if (!btn || btn.disabled) {
+        return;
+      }
+      if (!modeOn()) {
+        btn.click();
+      }
+      let tries = 0;
+      const go = () => {
+        const layer = page.querySelector(".annotationEditorLayer");
+        if (!layer || layer.hidden || layer.classList.contains("disabled") || !modeOn()) {
+          if (++tries < 20) {
+            win.setTimeout(go, 50);
+          }
+          return;
+        }
+        ours = true;
+        const opts = { bubbles: true, cancelable: true, clientX: x, clientY: y, button: 0, buttons: 1, pointerId: 1, isPrimary: true, pointerType: "mouse" };
+        layer.dispatchEvent(new win.PointerEvent("pointerdown", opts));
+        layer.dispatchEvent(new win.PointerEvent("pointerup", { ...opts, buttons: 0 }));
+      };
+      win.setTimeout(go, 60);
+    };
+
+    // клик по пропуску с точками
+    doc.addEventListener("click", e => {
+      if (e.button !== 0 || anyMode()) {
+        return;
+      }
+      const span = e.target?.closest?.(".textLayer span");
+      if (!span || !GAP.test(span.textContent || "")) {
+        return;
+      }
+      const sel = win.getSelection();
+      if (sel && !sel.isCollapsed) {
+        return; // человек выделял текст
+      }
+      const page = span.closest(".page");
+      if (page) {
+        create(page, e.clientX, e.clientY);
+      }
+    }, { signal });
+
+    // двойной клик по месту без текста (подходит и для сканов)
+    doc.addEventListener("dblclick", e => {
+      if (e.button !== 0 || anyMode()) {
+        return;
+      }
+      const t = e.target;
+      const word = t?.closest?.(".textLayer span");
+      if (word && (word.textContent || "").trim() && !GAP.test(word.textContent)) {
+        return; // по слову — обычное выделение слова
+      }
+      const page = t?.closest?.(".page");
+      if (!page) {
+        return;
+      }
+      win.getSelection()?.removeAllRanges();
+      create(page, e.clientX, e.clientY);
+    }, { signal });
+
+    // закончил печатать и ушёл из поля — выключаем инструмент «Текст»
+    doc.addEventListener("focusout", e => {
+      if (!ours || !e.target?.closest?.(".freeTextEditor")) {
+        return;
+      }
+      win.setTimeout(() => {
+        if (doc.activeElement?.closest?.(".freeTextEditor, #editorFreeTextParamsToolbar")) {
+          return;
+        }
+        ours = false;
+        if (modeOn()) {
+          toolBtn()?.click();
+        }
+      }, 250);
+    }, { signal });
+  }
 
   /* Своя палитра вместо системного окна Windows «Цвет» (оно из 90-х).
      Ловим клик по <input type="color"> в панели рисования/текста и
